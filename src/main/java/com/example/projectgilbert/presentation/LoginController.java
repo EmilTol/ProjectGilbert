@@ -1,6 +1,7 @@
 package com.example.projectgilbert.presentation;
 
 import com.example.projectgilbert.application.LoginService;
+import com.example.projectgilbert.application.ProductService;
 import com.example.projectgilbert.entity.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class LoginController {
     private final LoginService loginService;
+    private final ProductService productService;
 
     @Autowired
-    public LoginController(LoginService loginService) {
+    public LoginController(LoginService loginService, ProductService productService) {
+
         this.loginService = loginService;
+        this.productService = productService;
     }
 
     @GetMapping("/")
@@ -46,6 +50,7 @@ public class LoginController {
 
     @GetMapping("/home")
     public String showHomePage(HttpSession session, Model model) {
+        model.addAttribute("categories", productService.getTopCategories());
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
             return "redirect:/login";
@@ -53,4 +58,6 @@ public class LoginController {
         model.addAttribute("user", currentUser);
         return "home";
     }
+
+
 }
