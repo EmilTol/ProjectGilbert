@@ -59,5 +59,15 @@ public class LoginController {
         return "home";
     }
 
+    @GetMapping("/privateUser")
+    public String showPrivateUser(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", currentUser);
+        return "privateUser";
+    }
+
 
 }
