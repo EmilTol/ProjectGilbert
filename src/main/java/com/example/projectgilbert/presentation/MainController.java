@@ -10,14 +10,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class LoginController {
+public class MainController {
     private final LoginService loginService;
     private final ProductService productService;
 
     @Autowired
-    public LoginController(LoginService loginService, ProductService productService) {
+    public MainController(LoginService loginService, ProductService productService) {
 
         this.loginService = loginService;
         this.productService = productService;
@@ -44,6 +45,19 @@ public class LoginController {
             return "redirect:/home";
         } else {
             model.addAttribute("error", "Invalid email or password");
+            return "login";
+        }
+    }
+
+    @PostMapping("/register") // Bare kopieret, ting skal fjernes, er bare for træt ligenu
+    public String register(@ModelAttribute User user, @RequestParam("confirmPassword") String confirmPassword, Model model) {
+        boolean success = loginService.register(user, confirmPassword);
+        if (success) {
+            return "redirect:/login";
+        } else {
+            model.addAttribute("registrationError", "Forkert bekræft kodeord eller email allerede i brug");
+            model.addAttribute("showRegistrationModal", true);
+            model.addAttribute("user", new User());
             return "login";
         }
     }

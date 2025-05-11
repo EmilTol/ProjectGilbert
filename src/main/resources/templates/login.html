@@ -11,15 +11,25 @@
 <section class="wrapper">
   <div class="form signup">
     <header>Signup</header>
-    <form action="#" th:action="@{/signup}" th:object="${user}" method="post">
-      <input type="text" th:field="*{firstName}" placeholder="Full name" required />
+    <form action="#" th:action="@{/register}" th:object="${user}" method="post">
+      <input type="text" th:field="*{firstName}" placeholder="First Name" required />
+      <input type="text" th:field="*{lastName}" placeholder="Last Name" required />
       <input type="text" th:field="*{email}" placeholder="Email address" required />
-      <input type="password" th:field="*{password}" placeholder="Password" required />
-      <div class="checkbox">
-        <input type="checkbox" id="signupCheck" />
-        <label for="signupCheck">I accept all terms & conditions</label>
+      <div class="row">
+        <div class="col-md-6">
+          <input type="password" th:field="*{password}" placeholder="Password" required />
+        </div>
+        <div class="col-md-6">
+          <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+        </div>
       </div>
+      <input type="text" th:field="*{phoneNumber}" placeholder="Phone Number" required />
+<!--      <div class="checkbox">-->
+<!--        <input type="checkbox" id="signupCheck" />-->
+<!--        <label for="signupCheck">I accept all terms & conditions</label>-->
+<!--      </div>-->
       <input type="submit" value="Signup" />
+      <div th:if="${registrationError}" class="alert alert-danger mt-2" role="alert" th:text="${registrationError}"></div>
     </form>
   </div>
   <div class="form login">
@@ -33,7 +43,6 @@
     </form>
   </div>
 </section>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/login.js}"></script>
 </body>
 </html>
