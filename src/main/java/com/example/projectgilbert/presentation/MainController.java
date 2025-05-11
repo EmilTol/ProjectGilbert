@@ -7,27 +7,33 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MainController {
+
     private final LoginService loginService;
     private final ProductService productService;
 
     @Autowired
     public MainController(LoginService loginService, ProductService productService) {
-
-        this.loginService = loginService;
+        this.loginService  = loginService;
         this.productService = productService;
     }
 
+
     @GetMapping("/")
     public String rootRedirect() {
-        return "redirect:/login";
+        return "redirect:/home";
     }
+
+    @GetMapping("/home")
+    public String showHome(HttpSession session, Model model) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        return "home";
+    }
+
+
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
@@ -39,49 +45,43 @@ public class MainController {
 
     @PostMapping("/login")
     public String login(@ModelAttribute User user, HttpSession session, Model model) {
-        User loggedIn = loginService.login(user.getEmail(), user.getPassword());
+        User loggedIn = loginService.login(user.getEmail(), user.getPassword()); //Logger ind ved hjælp af loginservice
         if (loggedIn != null) {
-            session.setAttribute("currentUser", loggedIn);
+            session.setAttribute("currentUser", loggedIn); // gemmer den user som loggede ind i session
             return "redirect:/home";
-        } else {
-            model.addAttribute("error", "Invalid email or password");
-            return "login";
         }
+        model.addAttribute("error", "Incorrect email or password");
+        return "login";
     }
 
-    @PostMapping("/register") // Bare kopieret, ting skal fjernes, er bare for træt ligenu
-    public String register(@ModelAttribute User user, @RequestParam("confirmPassword") String confirmPassword, Model model) {
-        boolean success = loginService.register(user, confirmPassword);
-        if (success) {
-            return "redirect:/login";
-        } else {
-            model.addAttribute("registrationError", "Forkert bekræft kodeord eller email allerede i brug");
-            model.addAttribute("showRegistrationModal", true);
+
+    @GetMapping("/signup")
+    public String showSignupForm(Model model) {
+        if (!model.containsAttribute("user")) { // Hvis vi ikke har en "user" så opretter vi en tom ny user og sender til signup
             model.addAttribute("user", new User());
-            return "login";
         }
+        return "signup";
     }
 
-    @GetMapping("/home")
-    public String showHomePage(HttpSession session, Model model) {
-        model.addAttribute("categories", productService.getTopCategories());
-        User currentUser = (User) session.getAttribute("currentUser");
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", currentUser);
-        return "home";
+    @PostMapping("/register")
+    public String register(@ModelAttribute User user,
+                           @RequestParam("confirmPassword") String confirmPassword,
+                           Model model) {
+        boolean success = loginService.register(user, confirmPassword); // opret bruger, henter user inform og tjekker at confirm password er korrekt
+        if (success) { return "redirect:/login"; } // Hvis oprettelse gik godt går vi til login
+        model.addAttribute("registrationError",
+                "Password confirmation mismatch or email already in use");
+        return "signup";
     }
 
     @GetMapping("/privateUser")
     public String showPrivateUser(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
-            return "redirect:/login";
+            model.addAttribute("needAuth", true); // Kalder needAuth for at vise modal som spørger om login eller browse
+            return "home";
         }
         model.addAttribute("user", currentUser);
         return "privateUser";
     }
-
-
 }
