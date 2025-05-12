@@ -38,5 +38,17 @@ body { font-family:"Prata",sans-serif; background:var(--gm-white-brand); }
     /*hello*/
 }
 
+.home-listing .price-tag{
+    position:absolute;
+    top:.45rem;
+    left:.45rem;
+    background:var(--gm-dark-green);
+    color:var(--gm-white-brand);
+    font-weight:600;
+    font-size:.8rem;
+    padding:.1rem .55rem;
+    border-radius:.25rem;
+    z-index:5;
+}
 
 @media (max-width:576px){ body{padding-bottom:56px;} }

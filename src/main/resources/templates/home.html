@@ -56,20 +56,26 @@
     </div>
 </div>
 
-
-<main class="container-fluid py-3 flex-grow-1">
-    <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-5">
-        <div class="col" th:each="i : ${#numbers.sequence(1,10)}">
-            <div class="card h-100 shadow-sm product-card">
-                <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product image"/>
-                <div class="card-body">
-                    <h6 class="card-title mb-1">Vintage Jacket</h6>
-                    <p class="fw-semibold mb-0">250 DKK</p>
+<main class="container home-listing py-4">
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xxl-5 g-3">
+        <div class="col" th:each="listing : ${listings}">
+            <a th:href="@{/listings/{id}(id=${listing.listingId})}"
+               class="d-block h-100 text-decoration-none">
+                <div class="card h-100 position-relative">
+                    <span class="price-tag" th:text="${listing.price} + ' kr'"></span>
+                        <img th:src="@{/img/Jacket.jpg}" th:alt="${listing.brand} + ' ' + ${listing.model}" class="card-img-top">
+                        <div class="card-body p-2 d-flex flex-column">
+                            <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
+                            <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
+                            <small class="text-muted mb-3" th:text="'Condition: ' + (${listing.conditions} ?: 'N/A')">Condition </small>
+                            <button class="btn btn-outline-success w-100 mt-auto"> View details</button>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </main>
+
 
 
 <nav class="navbar fixed-bottom navbar-dark bg-dark-brown d-lg-none">

@@ -35,6 +35,7 @@ public class MainController {
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model) {
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("listings", productService.getAllListings());
         return "home";
     }
 
@@ -132,5 +133,12 @@ public class MainController {
     @ResponseBody
     public List<Size> getSizes(@RequestParam Long categoryId) {
         return productService.getSizesForCategory(categoryId);
+    }
+
+    @GetMapping("/listings/{id}")
+    public String listingPage(@PathVariable Long id, Model model) {
+        Listing listing = productService.getListingById(id);
+        model.addAttribute("listing", listing);
+        return "listingPage";
     }
 }

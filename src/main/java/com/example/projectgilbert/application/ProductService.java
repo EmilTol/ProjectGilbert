@@ -3,6 +3,7 @@ import com.example.projectgilbert.entity.Category;
 import com.example.projectgilbert.entity.Product;
 import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
+import com.example.projectgilbert.infrastructure.ListingRepository;
 import com.example.projectgilbert.infrastructure.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,10 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    private final ListingRepository listingRepository;
 
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductService(ListingRepository listingRepository) {
+        this.listingRepository = listingRepository;
     }
 
     public List<Product> getTopCategories() {
@@ -28,25 +29,34 @@ public class ProductService {
         if (ad.getModel() == null || ad.getModel().isEmpty()) {
             throw new IllegalArgumentException("Model is required");
         }
-        productRepository.save(ad);
+        listingRepository.save(ad);
     }
 
     public List<Category> getAllMainCategories() {
-        return productRepository.findAllCategories();
+        return listingRepository.findAllCategories();
     }
 
 
     public List<Category> getSubCategories(Long parentId) {
-        return productRepository.findSubCategoriesByParentId(parentId);
+        return listingRepository.findSubCategoriesByParentId(parentId);
     }
 
 
     public List<Size> getSizesForCategory(Long categoryId) {
-        return productRepository.findSizesByCategoryId(categoryId);
+        return listingRepository.findSizesByCategoryId(categoryId);
     }
 
     public List<Listing> getListingsForUser(Long userId) {
-        return productRepository.findListingsBySellerId(userId);
+        return listingRepository.findListingsBySellerId(userId);
+    }
+
+    public List<Listing> getAllListings() {
+        return listingRepository.findAllListings();
+    }
+
+
+    public Listing getListingById(Long id) {
+        return listingRepository.findListingById(id);
     }
 
 }
