@@ -9,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-white-brand">
 
 <!--nav bar til desktop-->
 <header class="navbar navbar-dark bg-dark-green py-2 px-3">
@@ -23,18 +23,18 @@
         <input class="form-control form-control-sm" type="text" name="q" placeholder="Search items…">
     </form>
 
-    <a class="navbar-brand mx-auto text-white fw-bold" th:href="@{/home}">Gilbert</a>
+    <a class="navbar-brand mx-auto text-white-brand fw-bold" th:href="@{/home}">Gilbert</a>
 
     <!--ku ndesktop-->
     <div class="d-none d-lg-flex align-items-center ms-auto">
 
         <th:block th:if="${currentUser == null}">
-            <a class="nav-link text-white me-2" th:href="@{/login}">Sign in</a>
-            <a class="btn btn-outline-light btn-sm" th:href="@{/signup}">Sign up</a>
+            <a class="btn btn-outline-light btn-desktop" th:href="@{/login}">Sign in</a>
+            <a class="btn btn-outline-light btn-desktop" th:href="@{/signup}">Sign up</a>
         </th:block>
         <!--Viser ikon når man er logget ind, så man ikke skal se på sign in og up konstant-->
         <th:block th:if="${currentUser != null}">
-            <a class="nav-link text-white" th:href="@{/privateUser}">
+            <a class="nav-link text-white-brand" th:href="@{/privateUser}">
                 <i class="bi bi-person-circle fs-4"></i>
             </a>
         </th:block>
@@ -64,7 +64,7 @@
                 <img src="https://via.placeholder.com/300" class="card-img-top" alt="Product image"/>
                 <div class="card-body">
                     <h6 class="card-title mb-1">Vintage Jacket</h6>
-                    <p class="fw-semibold mb-0">250 DKK</p>
+                    <p class="fw-semibold mb-0">250 DKK</p>
                 </div>
             </div>
         </div>
@@ -74,11 +74,11 @@
 
 <nav class="navbar fixed-bottom navbar-dark bg-dark-brown d-lg-none">
     <div class="container-fluid justify-content-around">
-        <a class="nav-link text-center text-white" th:href="@{/home}"><i class="bi bi-house"></i></a>
-        <a class="nav-link text-center text-white" href="#"><i class="bi bi-search"></i></a>
-        <a class="nav-link text-center text-white" href="#"><i class="bi bi-heart"></i></a>
-        <a class="nav-link text-center text-white" th:href="@{/privateUser}"><i class="bi bi-person-circle"></i></a>
-        <a class="nav-link text-center text-white" href="#"><i class="bi bi-bell"></i></a>
+        <a class="nav-link text-center text-white-brand" th:href="@{/home}"><i class="bi bi-house"></i></a>
+        <a class="nav-link text-center text-white-brand" href="#"><i class="bi bi-search"></i></a>
+        <a class="nav-link text-center text-white-brand" href="#"><i class="bi bi-heart"></i></a>
+        <a class="nav-link text-center text-white-brand" th:href="@{/privateUser}"><i class="bi bi-person-circle"></i></a>
+        <a class="nav-link text-center text-white-brand" href="#"><i class="bi bi-bell"></i></a>
     </div>
 </nav>
 

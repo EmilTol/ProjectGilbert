@@ -1,15 +1,15 @@
 
 :root {
     --gm-dark-green:#004224;
-    --gm-white:#f8f0e5;
+    --gm-white-brand:#f8f0e5;
     --gm-dark-brown:#423a26;
 }
 
-body { font-family:"Prata",sans-serif; background:var(--gm-white); }
+body { font-family:"Prata",sans-serif; background:var(--gm-white-brand); }
 
 .bg-dark-green { background:var(--gm-dark-green)}
 .bg-dark-brown { background:var(--gm-dark-brown)}
-.text-white    { color:var(--gm-white)}
+.text-white-brand    { color:var(--gm-white-brand)}
 
 
 .card {
@@ -42,11 +42,11 @@ body { font-family:"Prata",sans-serif; background:var(--gm-white); }
 .btn-primary {
     background-color: var(--gm-dark-green);
     border-color: var(--gm-dark-green);
-    color: var(--gm-white);
+    color: var(--gm-white-brand);
 }
 .btn-primary:hover,
 .btn-primary:focus {
     background-color: #00391e;
     border-color: #00391e;
-    color: var(--gm-white);
+    color: var(--gm-white-brand);
 }

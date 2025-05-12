@@ -69,8 +69,7 @@ public class MainController {
                            Model model) {
         boolean success = loginService.register(user, confirmPassword); // opret bruger, henter user inform og tjekker at confirm password er korrekt
         if (success) { return "redirect:/login"; } // Hvis oprettelse gik godt går vi til login
-        model.addAttribute("registrationError",
-                "Password confirmation mismatch or email already in use");
+        model.addAttribute("registrationError", "Password confirmation mismatch or email already in use");
         return "signup";
     }
 
