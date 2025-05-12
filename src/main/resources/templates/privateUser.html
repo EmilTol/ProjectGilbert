@@ -21,18 +21,19 @@
   <h1 class="h4 fw-semibold profile-name">Gilbert</h1>
   <img src="" alt="Profile" class="profile-picture">
   <h4 class = "profile-username">@Gilbert</h4>
+  <a th:href="@{/createSale}" class="sell-button">Sell item</a>
 </div>
 
 <main class="container pt-3 pb-5 flex-grow-1">
   <div class="row g-3">
 
-    <div class="col-6 col-md-4 col-lg-3">
+    <div class="col-6 col-md-4 col-lg-3" th:each="ad : ${userListings}">
       <div class="card product-card h-100">
-        <img src="" class="product-img" alt="Seje bukser">
-        <span class="price-tag">4500 DKK</span>
+        <img th:src="@{/images/default.jpg}" class="product-img" alt="Produktbillede">
+        <span class="price-tag" th:text="${ad.price} + ' kr'">Pris</span>
         <div class="card-body p-2 d-flex flex-column">
-          <h6 class="product-title flex-grow-1">Bukser</h6>
-          <span class="product-meta">Men L</span>
+          <h6 class="product-brand flex-grow-1" th:text="${ad.brand} + ' ' + ${ad.model}">Mærke og model</h6>
+          <span class="product-meta" th:text="${ad.itemType} + ', ' + ${ad.conditions} + ', str. ' + ${ad.sizeLabel}">Detaljer</span>
         </div>
       </div>
     </div>

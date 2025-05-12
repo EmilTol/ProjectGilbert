@@ -93,6 +93,21 @@ body {
 
 }
 
+.container1 .sell-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;      /* de 3 her er nødvendige, så tekst i midten af knap */
+    margin-top: 100px;
+    margin-left: 250px;
+    width: 120px;
+    height: 40px;
+    background-color: #004224;
+    border: 2px solid #423a26;
+    color: #f8f0e5;
+    text-align: center;
+    text-decoration: none;
+}
+
 /* forstår ikke denne */
 
 @media (max-width: 767.98px) {

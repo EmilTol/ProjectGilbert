@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF‑8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Selling</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/sale.css}">
+
+</head>
+<body class="brand-main d-flex flex-column">
+
+<header class="brand-main text-brand-light d-flex align-items-center px-3 py-2">
+    <h1 class="h4 mb-0 flex-grow-1 fw-semibold">Gilbert</h1>
+    <a th:href="@{/privateUser}" class="d-flex align-items-center text-decoration-none text-brand-light ">
+        <img src="" alt="Profile" class="profile-pic">
+    </a>
+</header>
+
+<nav class="navbar navbar-expand main-nav navbar-dark brand-brown">
+    <div class="container-fluid justify-content-around">
+        <a class="nav-link text-center" href="#"><i class="fas fa-home fa-lg"></i><span class="d-md-none d-block small">Home</span></a>
+        <a class="nav-link text-center" href="#"><i class="fas fa-search fa-lg"></i><span class="d-md-none d-block small">Search</span></a>
+        <a class="nav-link text-center" href="#"><i class="fas fa-plus fa-lg"></i><span class="d-md-none d-block small">Sell</span></a>
+        <a class="nav-link text-center" th:href="@{/privateUser}"><i class="fas fa-user fa-lg"></i><span class="d-md-none d-block small">Profile</span></a>
+    </div>
+</nav>
+
+<div class = "text-brand-light container1">
+
+<h2>Sell something!!!</h2>
+
+<form th:action="@{/createSale}" method="post" th:object="${saleAd}">
+    <label>Who is it for</label>
+    <select id="mainCategory" onchange="loadSubCategories()">
+        <option value="">Choose</option>
+        <th:block th:each="cat : ${mainCategories}">
+            <option th:value="${cat.categoryId}" th:text="${cat.name}"></option>
+        </th:block>
+    </select>
+
+    <label>What is it</label>
+    <select id="midCategory" onchange="loadSubSubCategoriesAndSizes()"></select>
+
+    <label>Details please</label>
+    <select id="subCategory" name="categoryId"></select>
+
+    <label>Size?</label>
+    <select id="sizeSelect" name="sizeId">
+        <option value="">Choose</option>
+    </select>
+
+    <label>Type
+        <input type="text" th:field="*{itemType}" required>
+    </label><br>
+
+    <label>Model
+        <input type="text" th:field="*{model}" required>
+    </label><br>
+
+    <label>Brand
+        <input type="text" th:field="*{brand}" required>
+    </label><br>
+
+    <label>Color
+        <input type="text" th:field="*{color}">
+    </label><br>
+
+    <label>Description
+        <textarea th:field="*{description}" required></textarea>
+    </label><br>
+
+    <label>Condition
+        <select th:field="*{conditions}">
+            <option th:each="cond : ${conditionsList}" th:value="${cond}" th:text="${cond}"></option>
+        </select>
+    </label><br>
+
+    <label>Matrieal
+        <input type="text" th:field="*{materials}">
+    </label><br>
+
+    <label>Price
+        <input type="number" step="0.01" th:field="*{price}" required>
+    </label><br>
+
+    <label>Coupon ig
+        <input type="number" step="0.01" th:field="*{maxDiscountPercent}">
+    </label><br>
+
+    <button type="submit">Someone buy my stuff pls</button>
+</form>
+
+</div>
+
+<script>
+    function loadSubCategories() {
+        //henter Women, men osv
+        const parentId = document.getElementById("mainCategory").value;
+        //fetch har med responseBody at gøre. modtager som noget hedder JSON
+        fetch(`/subcategories?parentId=${parentId}`)
+            .then(res => res.json())
+            .then(data => {
+                const mid = document.getElementById("midCategory");
+                mid.innerHTML = '<option value="">Choose</option>';
+                data.forEach(c => {
+                    mid.innerHTML += `<option value="${c.categoryId}">${c.name}</option>`;
+                });
+                //rydder de andre, så de blank, hvilket de alligvel er ig
+                document.getElementById("subCategory").innerHTML = '';
+                document.getElementById("sizeSelect").innerHTML = '';
+            });
+    }
+
+    function loadSubSubCategoriesAndSizes() {
+        //henter kategorier som clothes, shoes (der størrelser hænger sammen)
+        const parentId = document.getElementById("midCategory").value;
+
+        //de sidste kategorier
+        fetch(`/subcategories?parentId=${parentId}`)
+            .then(res => res.json())
+            .then(data => {
+                const sub = document.getElementById("subCategory");
+                sub.innerHTML = '<option value="">Choose</option>';
+                data.forEach(c => {
+                    sub.innerHTML += `<option value="${c.categoryId}">${c.name}</option>`;
+                });
+            });
+
+        // Størrelser
+        fetch(`/sizes?categoryId=${parentId}`)
+            .then(res => res.json())
+            .then(data => {
+                const size = document.getElementById("sizeSelect");
+                size.innerHTML = '<option value="">Vælg</option>';
+                data.forEach(s => {
+                    size.innerHTML += `<option value="${s.sizeId}">${s.sizeLabel}</option>`;
+                });
+            });
+    }
+</script>
+</body>
+</html>

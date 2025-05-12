@@ -2,12 +2,17 @@ package com.example.projectgilbert.presentation;
 
 import com.example.projectgilbert.application.LoginService;
 import com.example.projectgilbert.application.ProductService;
+import com.example.projectgilbert.entity.Category;
+import com.example.projectgilbert.entity.SaleAdvertisement;
+import com.example.projectgilbert.entity.Size;
 import com.example.projectgilbert.entity.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -77,10 +82,54 @@ public class MainController {
     public String showPrivateUser(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
-            model.addAttribute("needAuth", true); // Kalder needAuth for at vise modal som spørger om login eller browse
-            return "home";
+            return "redirect:/login";
         }
+        List<SaleAdvertisement> userListings = productService.getListingsForUser(currentUser.getUserId());
         model.addAttribute("user", currentUser);
+        model.addAttribute("userListings", userListings);
         return "privateUser";
+    }
+
+    @GetMapping("/createSale")
+    public String showCreateListingForm(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("saleAd", new SaleAdvertisement());
+        model.addAttribute("mainCategories", productService.getAllMainCategories());
+        model.addAttribute("conditionsList", List.of("NEW", "LIKE_NEW", "GOOD", "FAIR", "POOR"));
+        // Tilføj også kategori og størrelse fra din service hvis nødvendigt
+        return "createSale";
+    }
+
+    @PostMapping("/createSale")
+    public String createListing(@ModelAttribute("saleAd") SaleAdvertisement ad, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        //den her sætter SellerId som hvem end der er logget ind
+        ad.setSellerId(currentUser.getUserId());
+        //setter dem her da de ikke skal indtastes
+        ad.setStatus("PENDING");
+        ad.setFairTrade(false);
+        ad.setValidated(false);
+
+        productService.createListing(ad);
+        return "redirect:/privateUser";
+    }
+    //dette mapper ikke til en html fil, bliver brugt i noget JavaScript, bruges til dynamisk dropdowns
+    @GetMapping("/subcategories")
+    @ResponseBody
+    public List<Category> getSubCategories(@RequestParam Long parentId) {
+        return productService.getSubCategories(parentId);
+    }
+
+    @GetMapping("/sizes")
+    @ResponseBody
+    public List<Size> getSizes(@RequestParam Long categoryId) {
+        return productService.getSizesForCategory(categoryId);
     }
 }
