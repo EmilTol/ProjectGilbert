@@ -6,7 +6,9 @@ body {
 }
 .brand-main  { background-color: #004224; }
 .brand-brown { background-color: #423a26; }
+.brand-light {background-color: #f8f0e5}
 .text-brand-light { color: #f8f0e5; }
+
 
 .main-nav {
     position: fixed;
@@ -24,15 +26,6 @@ body {
     }
 }
 
-.main-nav .nav-link {
-    color: #f8f0e5;
-    font-size: 1.1rem;
-}
-
-.main-nav .nav-link:hover {
-    color: #ffffff;
-}
-
 @media (max-width: 767.98px) {
     body {
         padding-bottom: 64px;
@@ -41,9 +34,10 @@ body {
 }
 
 .container1 {
+    margin-left: 10px;
     margin-top: 30px;
     align-items: center;
-    text-align: center;
+    text-align: left;
     text-decoration: none;
 }
 .container1 label {
@@ -56,4 +50,17 @@ body {
     width: 240px;
     height: 60px;
     border: 2px solid #00301b;
+}
+
+.container1 input {
+    width: 90%;
+    height: 50px;
+}
+.container1 select {
+    width: 90%;
+    height: 50px;
+}
+.container1 textarea {
+    width: 90%;
+    height: 60px;
 }

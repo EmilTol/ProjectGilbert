@@ -100,9 +100,15 @@ public class MainController {
         }
 
         model.addAttribute("saleAd", new Listing());
-        model.addAttribute("mainCategories", productService.getAllMainCategories());
+
+        // Hent alle kategorier fra databasen
+        List<Category> allCategories = productService.getAllCategories();
+        List<Size> allSizes = productService.getAllSizes();
+
+        model.addAttribute("allCategories", allCategories);
+        model.addAttribute("allSizes", allSizes);
         model.addAttribute("conditionsList", List.of("NEW", "LIKE_NEW", "GOOD", "FAIR", "POOR"));
-        // Tilføj også kategori og størrelse fra din service hvis nødvendigt
+
         return "createSale";
     }
 
@@ -112,27 +118,14 @@ public class MainController {
         if (currentUser == null) {
             return "redirect:/login";
         }
-        //den her sætter SellerId som hvem end der er logget ind
+
         ad.setSellerId(currentUser.getUserId());
-        //setter dem her da de ikke skal indtastes
         ad.setStatus("PENDING");
         ad.setFairTrade(false);
         ad.setValidated(false);
 
         productService.createListing(ad);
         return "redirect:/privateUser";
-    }
-    //dette mapper ikke til en html fil, bliver brugt i noget JavaScript, bruges til dynamisk dropdowns
-    @GetMapping("/subcategories")
-    @ResponseBody
-    public List<Category> getSubCategories(@RequestParam Long parentId) {
-        return productService.getSubCategories(parentId);
-    }
-
-    @GetMapping("/sizes")
-    @ResponseBody
-    public List<Size> getSizes(@RequestParam Long categoryId) {
-        return productService.getSizesForCategory(categoryId);
     }
 
     @GetMapping("/listings/{id}")

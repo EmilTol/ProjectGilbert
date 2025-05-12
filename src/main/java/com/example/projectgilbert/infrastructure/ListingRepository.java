@@ -72,6 +72,17 @@ public class ListingRepository {
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Size.class), categoryId);
     }
 
+    public List<Category> findAllCategoriesFlat() {
+        String sql = "SELECT * FROM categories";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class));
+    }
+
+    public List<Size> findAllSizes() {
+        String sql = "SELECT * FROM sizes";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Size.class));
+    }
+
+
 //    @Override
     public List<Listing> findListingsBySellerId(Long sellerId) {
         String sql = """

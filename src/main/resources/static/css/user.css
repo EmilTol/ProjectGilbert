@@ -7,6 +7,8 @@ body {
 .brand-main  { background-color: #004224; }
 .brand-brown { background-color: #423a26; }
 .text-brand-light { color: #f8f0e5; }
+.brand-light {background-color: #f8f0e5}
+.darker-green { background-color: #00391e}
 
 /* header profil billede */
 .profile-pic {
@@ -121,7 +123,7 @@ body {
     border: none;
     border-radius: 0;
     overflow: hidden;
-    background: #f8f0e5;
+    background: honeydew;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -170,4 +172,8 @@ body {
     width: 55px;
     height: 50px;
     object-fit: contain;
+}
+.nav-link {
+    color: #f8f0e5;
+    font-size: medium;
 }

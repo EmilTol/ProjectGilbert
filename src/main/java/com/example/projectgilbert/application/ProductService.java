@@ -58,5 +58,12 @@ public class ProductService {
     public Listing getListingById(Long id) {
         return listingRepository.findListingById(id);
     }
+    public List<Category> getAllCategories() {
+        return listingRepository.findAllCategoriesFlat(); // ny metode
+    }
+
+    public List<Size> getAllSizes() {
+        return listingRepository.findAllSizes(); // ny metode
+    }
 
 }

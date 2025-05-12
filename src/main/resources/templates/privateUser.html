@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link th:href="@{/css/user.css}" rel="stylesheet" />
 </head>
-<body class="brand-main d-flex flex-column">
+<body class="brand-light d-flex flex-column">
 
 <header class="brand-main text-brand-light d-flex align-items-center px-3 py-2">
   <h1 class="h4 mb-0 flex-grow-1 fw-semibold">Gilbert</h1>
@@ -24,8 +25,44 @@
   <a th:href="@{/createSale}" class="sell-button">Sell item</a>
 </div>
 
+<div class = "darker-green text-brand-light container 2">
+  <ul class="nav nav-tabs nav-fill">
+    <li class="nav-item">
+      <a class="nav-link" aria-current="page" href="#">Listing</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Orders</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Selling</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" aria-disabled="true">Stuff</a>
+    </li>
+  </ul>
+
+</div>
+
 <main class="container pt-3 pb-5 flex-grow-1">
   <div class="row g-3">
+
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xxl-5 g-3">
+      <div class="col" th:each="listing : ${listings}">
+        <a th:href="@{/listings/{id}(id=${listing.listingId})}"
+           class="d-block h-100 text-decoration-none">
+          <div class="card h-100 position-relative">
+            <span class="price-tag" th:text="${listing.price} + ' kr'"></span>
+            <img th:src="@{/img/Jacket.jpg}" th:alt="${listing.brand} + ' ' + ${listing.model}" class="card-img-top">
+            <div class="card-body p-2 d-flex flex-column">
+              <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
+              <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
+              <small class="text-muted mb-3" th:text="'Condition: ' + (${listing.conditions} ?: 'N/A')">Condition </small>
+              <button class="btn btn-outline-success w-100 mt-auto"> View details</button>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
 
     <div class="col-6 col-md-4 col-lg-3" th:each="ad : ${userListings}">
       <div class="card product-card h-100">
@@ -70,28 +107,17 @@
         </div>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="card product-card h-100">
-        <img src="" class="product-img" alt="Tøj ting">
-        <span class="price-tag">2500 dkk</span>
-        <div class="card-body p-2 d-flex flex-column">
-          <h6 class="product-title flex-grow-1">Kvinde tøj</h6>
-          <span class="product-meta">Women S</span>
-        </div>
-      </div>
-    </div>
+
   </div>
 </main>
 
-<nav class="navbar navbar-expand main-nav navbar-dark ">
-  <div class="btn-group d-flex w-100">
-    <button class="button flex-fill">Home</button>
-    <button class="button flex-fill">Search</button>
-    <button class="button flex-fill">
-      <img th:src="@{/img/iconTest.png}" alt="Favorites" class="icon-img3">
-    </button>
-    <button class="button flex-fill">Me</button>
-    <button class="button flex-fill">i forgot</button>
+<nav class="navbar fixed-bottom navbar-dark brand-brown d-lg-none">
+  <div class="container-fluid justify-content-around">
+    <a class="nav-link text-center text-brand-light" th:href="@{/home}"><i class="bi bi-house"></i></a>
+    <a class="nav-link text-center text-brand-light" href="#"><i class="bi bi-search"></i></a>
+    <a class="nav-link text-center text-brand-light" href="#"><i class="bi bi-heart"></i></a>
+    <a class="nav-link text-center text-brand-light" th:href="@{/privateUser}"><i class="bi bi-person-circle"></i></a>
+    <a class="nav-link text-center text-brand-light" href="#"><i class="bi bi-bell"></i></a>
   </div>
 </nav>
 

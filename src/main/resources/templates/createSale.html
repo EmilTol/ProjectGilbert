@@ -4,7 +4,8 @@
     <meta charset="UTF‑8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Selling</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/sale.css}">
 
 </head>
@@ -17,12 +18,13 @@
     </a>
 </header>
 
-<nav class="navbar navbar-expand main-nav navbar-dark brand-brown">
+<nav class="navbar fixed-bottom navbar-dark brand-brown d-lg-none">
     <div class="container-fluid justify-content-around">
-        <a class="nav-link text-center" href="#"><i class="fas fa-home fa-lg"></i><span class="d-md-none d-block small">Home</span></a>
-        <a class="nav-link text-center" href="#"><i class="fas fa-search fa-lg"></i><span class="d-md-none d-block small">Search</span></a>
-        <a class="nav-link text-center" href="#"><i class="fas fa-plus fa-lg"></i><span class="d-md-none d-block small">Sell</span></a>
-        <a class="nav-link text-center" th:href="@{/privateUser}"><i class="fas fa-user fa-lg"></i><span class="d-md-none d-block small">Profile</span></a>
+        <a class="nav-link text-center text-brand-light" th:href="@{/home}"><i class="bi bi-house"></i></a>
+        <a class="nav-link text-center text-brand-light" href="#"><i class="bi bi-search"></i></a>
+        <a class="nav-link text-center text-brand-light" href="#"><i class="bi bi-heart"></i></a>
+        <a class="nav-link text-center text-brand-light" th:href="@{/privateUser}"><i class="bi bi-person-circle"></i></a>
+        <a class="nav-link text-center text-brand-light" href="#"><i class="bi bi-bell"></i></a>
     </div>
 </nav>
 
@@ -30,114 +32,93 @@
 
 <h2>Sell something!!!</h2>
 
-<form th:action="@{/createSale}" method="post" th:object="${saleAd}">
-    <label>Who is it for</label>
-    <select id="mainCategory" onchange="loadSubCategories()">
-        <option value="">Choose</option>
-        <th:block th:each="cat : ${mainCategories}">
-            <option th:value="${cat.categoryId}" th:text="${cat.name}"></option>
-        </th:block>
-    </select>
+    <form th:action="@{/createSale}" th:object="${saleAd}" method="post">
 
-    <label>What is it</label>
-    <select id="midCategory" onchange="loadSubSubCategoriesAndSizes()"></select>
-
-    <label>Details please</label>
-    <select id="subCategory" name="categoryId"></select>
-
-    <label>Size?</label>
-    <select id="sizeSelect" name="sizeId">
-        <option value="">Choose</option>
-    </select>
-
-    <label>Type
-        <input type="text" th:field="*{itemType}" required>
-    </label><br>
-
-    <label>Model
-        <input type="text" th:field="*{model}" required>
-    </label><br>
-
-    <label>Brand
-        <input type="text" th:field="*{brand}" required>
-    </label><br>
-
-    <label>Color
-        <input type="text" th:field="*{color}">
-    </label><br>
-
-    <label>Description
-        <textarea th:field="*{description}" required></textarea>
-    </label><br>
-
-    <label>Condition
-        <select th:field="*{conditions}">
-            <option th:each="cond : ${conditionsList}" th:value="${cond}" th:text="${cond}"></option>
+        <div class = "mb-3">
+        <label>Choose main category:</label><br>
+        <select name="mainCategoryId" required>
+            <option value="" disabled selected>Select main category</option>
+            <th:block th:each="cat : ${allCategories}">
+                <option th:if="${cat.parentId == null}"
+                        th:value="${cat.categoryId}"
+                        th:text="${cat.name}"></option>
+            </th:block>
         </select>
-    </label><br>
+        </div>
 
-    <label>Matrieal
-        <input type="text" th:field="*{materials}">
-    </label><br>
+        <div class="mb-3">
+        <label>Choose subcategory:</label><br>
+        <select name="categoryId" required>
+            <option value="" disabled selected>Select subcategory</option>
+            <th:block th:each="cat : ${allCategories}">
+                <option th:if="${cat.parentId != null}"
+                        th:value="${cat.categoryId}"
+                        th:text="${cat.name}"></option>
+            </th:block>
+        </select>
+        </div>
 
-    <label>Price
-        <input type="number" step="0.01" th:field="*{price}" required>
-    </label><br>
+        <div class = "mb-3">
+        <label>Choose size:</label><br>
+        <select name="sizeId">
+            <option value="" selected>No size</option>
+            <th:block th:each="size : ${allSizes}">
+                <option th:value="${size.sizeId}"
+                        th:text="${size.sizeLabel}"></option>
+            </th:block>
+        </select>
+        </div>
 
-    <label>Coupon ig
-        <input type="number" step="0.01" th:field="*{maxDiscountPercent}">
-    </label><br>
+        <div class = "mb-3">
+        <label class = "form-label">Type </label><br>
+            <input type="text" th:field="*{itemType}" placeholder="Example t-shirt" required>
+        </div>
 
-    <button type="submit">Someone buy my stuff pls</button>
-</form>
+        <div class = "mb-3">
+        <label>Model </label><br>
+        <input type="text" th:field="*{model}" placeholder="Example t-shirt" required>
+        </div>
+
+        <div class = "mb-3">
+        <label>Brand </label><br>
+        <input type="text" th:field="*{brand}" placeholder="Example t-shirt" required>
+        </div>
+
+        <div class = "mb-3">
+        <label>Color </label><br>
+        <input type="text" th:field="*{color}" placeholder="Example t-shirt">
+        </div>
+
+        <div class = "mb-3">
+        <label>Description </label><br>
+        <textarea th:field="*{description}" required></textarea>
+        </div>
+
+        <div class = "mb-3">
+        <label>Condition</label><br>
+            <select th:field="*{conditions}">
+                <option th:each="cond : ${conditionsList}" th:value="${cond}" th:text="${cond}"></option>
+            </select>
+        </div>
+
+        <div class = "mb-3">
+        <label>Material </label><br>
+            <input type="text" th:field="*{materials}">
+        </div>
+
+        <div class = "mb-3">
+        <label>Price </label><br>
+            <input type="number" step="0.01" th:field="*{price}" required>
+        </div>
+
+        <div class = "mb-3">
+        <label>Coupon</label><br>
+            <input type="number" step="0.01" th:field="*{maxDiscountPercent}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sell item</button>
+    </form>
 
 </div>
-
-<script>
-    function loadSubCategories() {
-        //henter Women, men osv
-        const parentId = document.getElementById("mainCategory").value;
-        //fetch har med responseBody at gøre. modtager som noget hedder JSON
-        fetch(`/subcategories?parentId=${parentId}`)
-            .then(res => res.json())
-            .then(data => {
-                const mid = document.getElementById("midCategory");
-                mid.innerHTML = '<option value="">Choose</option>';
-                data.forEach(c => {
-                    mid.innerHTML += `<option value="${c.categoryId}">${c.name}</option>`;
-                });
-                //rydder de andre, så de blank, hvilket de alligvel er ig
-                document.getElementById("subCategory").innerHTML = '';
-                document.getElementById("sizeSelect").innerHTML = '';
-            });
-    }
-
-    function loadSubSubCategoriesAndSizes() {
-        //henter kategorier som clothes, shoes (der størrelser hænger sammen)
-        const parentId = document.getElementById("midCategory").value;
-
-        //de sidste kategorier
-        fetch(`/subcategories?parentId=${parentId}`)
-            .then(res => res.json())
-            .then(data => {
-                const sub = document.getElementById("subCategory");
-                sub.innerHTML = '<option value="">Choose</option>';
-                data.forEach(c => {
-                    sub.innerHTML += `<option value="${c.categoryId}">${c.name}</option>`;
-                });
-            });
-
-        // Størrelser
-        fetch(`/sizes?categoryId=${parentId}`)
-            .then(res => res.json())
-            .then(data => {
-                const size = document.getElementById("sizeSelect");
-                size.innerHTML = '<option value="">Choose</option>';
-                data.forEach(s => {
-                    size.innerHTML += `<option value="${s.sizeId}">${s.sizeLabel}</option>`;
-                });
-            });
-    }
-</script>
 </body>
 </html>
