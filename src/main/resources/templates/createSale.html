@@ -132,7 +132,7 @@
             .then(res => res.json())
             .then(data => {
                 const size = document.getElementById("sizeSelect");
-                size.innerHTML = '<option value="">Vælg</option>';
+                size.innerHTML = '<option value="">Choose</option>';
                 data.forEach(s => {
                     size.innerHTML += `<option value="${s.sizeId}">${s.sizeLabel}</option>`;
                 });
