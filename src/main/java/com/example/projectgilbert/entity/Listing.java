@@ -3,7 +3,7 @@ package com.example.projectgilbert.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class SaleAdvertisement {
+public class Listing {
         private Long listingId;
         private Long sellerId;
         private Long categoryId;

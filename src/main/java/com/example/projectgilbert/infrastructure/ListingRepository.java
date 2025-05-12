@@ -1,7 +1,7 @@
 package com.example.projectgilbert.infrastructure;
 
 import com.example.projectgilbert.entity.Category;
-import com.example.projectgilbert.entity.SaleAdvertisement;
+import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,17 +10,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ProductRepositoryImpl implements ProductRepository {
+public class ListingRepository implements ProductRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ProductRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public ListingRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     //opretter ny listing
     @Override
-    public void save(SaleAdvertisement ad) {
+    public void save(Listing ad) {
         String sql = "INSERT INTO listings (seller_id, category_id, size_id, item_type, model, brand, description, conditions, materials, price, max_discount_percent, color, status, is_fair_trade, is_validated) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -72,7 +72,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<SaleAdvertisement> findListingsBySellerId(Long sellerId) {
+    public List<Listing> findListingsBySellerId(Long sellerId) {
         String sql = """
         SELECT l.*, s.size_label 
         FROM listings l
@@ -80,6 +80,6 @@ public class ProductRepositoryImpl implements ProductRepository {
         WHERE l.seller_id = ?
     """;
 
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(SaleAdvertisement.class), sellerId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Listing.class), sellerId);
     }
 }

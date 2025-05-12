@@ -3,7 +3,7 @@ package com.example.projectgilbert.presentation;
 import com.example.projectgilbert.application.LoginService;
 import com.example.projectgilbert.application.ProductService;
 import com.example.projectgilbert.entity.Category;
-import com.example.projectgilbert.entity.SaleAdvertisement;
+import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
 import com.example.projectgilbert.entity.User;
 import jakarta.servlet.http.HttpSession;
@@ -82,9 +82,10 @@ public class MainController {
     public String showPrivateUser(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
-            return "redirect:/login";
+            model.addAttribute("needAuth", true);
+            return "home";
         }
-        List<SaleAdvertisement> userListings = productService.getListingsForUser(currentUser.getUserId());
+        List<Listing> userListings = productService.getListingsForUser(currentUser.getUserId());
         model.addAttribute("user", currentUser);
         model.addAttribute("userListings", userListings);
         return "privateUser";
@@ -97,7 +98,7 @@ public class MainController {
             return "redirect:/login";
         }
 
-        model.addAttribute("saleAd", new SaleAdvertisement());
+        model.addAttribute("saleAd", new Listing());
         model.addAttribute("mainCategories", productService.getAllMainCategories());
         model.addAttribute("conditionsList", List.of("NEW", "LIKE_NEW", "GOOD", "FAIR", "POOR"));
         // Tilføj også kategori og størrelse fra din service hvis nødvendigt
@@ -105,7 +106,7 @@ public class MainController {
     }
 
     @PostMapping("/createSale")
-    public String createListing(@ModelAttribute("saleAd") SaleAdvertisement ad, HttpSession session) {
+    public String createListing(@ModelAttribute("saleAd") Listing ad, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
             return "redirect:/login";
