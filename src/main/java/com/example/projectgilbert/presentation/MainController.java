@@ -1,7 +1,7 @@
 package com.example.projectgilbert.presentation;
 
 import com.example.projectgilbert.application.LoginService;
-import com.example.projectgilbert.application.ProductService;
+import com.example.projectgilbert.application.ListingService;
 import com.example.projectgilbert.application.UserService;
 import com.example.projectgilbert.entity.Category;
 import com.example.projectgilbert.entity.Listing;
@@ -19,13 +19,13 @@ import java.util.List;
 public class MainController {
 
     private final LoginService loginService;
-    private final ProductService productService;
+    private final ListingService listingService;
     private final UserService userService;
 
     @Autowired
-    public MainController(LoginService loginService, ProductService productService, UserService userService ) {
+    public MainController(LoginService loginService, ListingService listingService, UserService userService ) {
         this.loginService  = loginService;
-        this.productService = productService;
+        this.listingService = listingService;
         this.userService = userService;
     }
 
@@ -38,7 +38,7 @@ public class MainController {
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model) {
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
-        model.addAttribute("listings", productService.getAllListings());
+        model.addAttribute("listings", listingService.getAllListings());
         return "home";
     }
 
@@ -89,7 +89,7 @@ public class MainController {
             model.addAttribute("needAuth", true);
             return "home";
         }
-        List<Listing> userListings = productService.getListingsForUser(currentUser.getUserId());
+        List<Listing> userListings = listingService.getListingsForUser(currentUser.getUserId());
 
         model.addAttribute("user", currentUser);
         model.addAttribute("userListings", userListings);
@@ -137,8 +137,8 @@ public class MainController {
         model.addAttribute("saleAd", new Listing());
 
         // Hent alle kategorier fra databasen
-        List<Category> allCategories = productService.getAllCategories();
-        List<Size> allSizes = productService.getAllSizes();
+        List<Category> allCategories = listingService.getAllCategories();
+        List<Size> allSizes = listingService.getAllSizes();
 
         model.addAttribute("allCategories", allCategories);
         model.addAttribute("allSizes", allSizes);
@@ -159,13 +159,13 @@ public class MainController {
         ad.setFairTrade(false);
         ad.setValidated(false);
 
-        productService.createListing(ad);
+        listingService.createListing(ad);
         return "redirect:/privateUser";
     }
 
     @GetMapping("/listings/{id}")
     public String listingPage(@PathVariable Long id, Model model) {
-        Listing listing = productService.getListingById(id);
+        Listing listing = listingService.getListingById(id);
         model.addAttribute("listing", listing);
         return "listingPage";
     }

@@ -54,7 +54,7 @@ public class UserRepository {
                 user.getUserId());
 
         if (updatedRows == 0) {
-            System.out.println("Ingen rækker blev opdateret! ID: " + user.getUserId());
+            System.out.println("No rows updated" + user.getUserId());
         }
     }
 

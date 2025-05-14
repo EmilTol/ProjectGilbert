@@ -1,20 +1,18 @@
 package com.example.projectgilbert.application;
 import com.example.projectgilbert.entity.Category;
-import com.example.projectgilbert.entity.Product;
 import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
 import com.example.projectgilbert.infrastructure.ListingRepository;
-import com.example.projectgilbert.infrastructure.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ProductService {
+public class ListingService {
 
     private final ListingRepository listingRepository;
 
-    public ProductService(ListingRepository listingRepository) {
+    public ListingService(ListingRepository listingRepository) {
         this.listingRepository = listingRepository;
     }
 
