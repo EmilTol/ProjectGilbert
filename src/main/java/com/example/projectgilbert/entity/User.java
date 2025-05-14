@@ -5,6 +5,7 @@ public class User {
     private String email;
     private String password;
     private String firstName;
+    private String username;
     private String lastName;
     private String phoneNumber;
 

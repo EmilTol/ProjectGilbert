@@ -2,6 +2,7 @@ package com.example.projectgilbert.presentation;
 
 import com.example.projectgilbert.application.LoginService;
 import com.example.projectgilbert.application.ProductService;
+import com.example.projectgilbert.application.UserService;
 import com.example.projectgilbert.entity.Category;
 import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
@@ -19,11 +20,13 @@ public class MainController {
 
     private final LoginService loginService;
     private final ProductService productService;
+    private final UserService userService;
 
     @Autowired
-    public MainController(LoginService loginService, ProductService productService) {
+    public MainController(LoginService loginService, ProductService productService, UserService userService ) {
         this.loginService  = loginService;
         this.productService = productService;
+        this.userService = userService;
     }
 
 
@@ -87,9 +90,41 @@ public class MainController {
             return "home";
         }
         List<Listing> userListings = productService.getListingsForUser(currentUser.getUserId());
+
         model.addAttribute("user", currentUser);
         model.addAttribute("userListings", userListings);
+
         return "privateUser";
+    }
+    @GetMapping("/editUser")
+    public String showEditUser(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+        model.addAttribute("user", currentUser);
+
+        return "editUser";
+    }
+    @PostMapping("/editUser")
+    public String editUser(HttpSession session, Model model, @RequestParam (required = false) String email,
+                           @RequestParam (required = false) String password,
+                           @RequestParam (required = false) String firstName,
+                           @RequestParam (required = false) String lastName,
+                           @RequestParam (required = false) String phoneNumber) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/home";
+        }
+        userService.updateUser(currentUser.getUserId(), email, password, firstName, lastName, phoneNumber );
+
+        //sørger for at "updatere" informationerne på siden
+        User updatedUser = userService.getUserById(currentUser.getUserId());
+        session.setAttribute("currentUser", updatedUser);
+
+        return "redirect:/privateUser";
+
     }
 
     @GetMapping("/createSale")

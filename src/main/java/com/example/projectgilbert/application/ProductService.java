@@ -18,12 +18,6 @@ public class ProductService {
         this.listingRepository = listingRepository;
     }
 
-    public List<Product> getTopCategories() {
-        Product sneakers = new Product("Sneakers", List.of());
-        Product shoes = new Product("Shoes", List.of(sneakers));
-        Product woman = new Product("Woman", List.of(shoes));
-        return List.of(woman);
-    }
 
     public void createListing(Listing ad) {
         if (ad.getModel() == null || ad.getModel().isEmpty()) {
@@ -32,23 +26,12 @@ public class ProductService {
         listingRepository.save(ad);
     }
 
-    public List<Category> getAllMainCategories() {
-        return listingRepository.findAllCategories();
-    }
-
-
-    public List<Category> getSubCategories(Long parentId) {
-        return listingRepository.findSubCategoriesByParentId(parentId);
-    }
-
-
-    public List<Size> getSizesForCategory(Long categoryId) {
-        return listingRepository.findSizesByCategoryId(categoryId);
-    }
 
     public List<Listing> getListingsForUser(Long userId) {
         return listingRepository.findListingsBySellerId(userId);
     }
+
+
 
     public List<Listing> getAllListings() {
         return listingRepository.findAllListings();
@@ -59,11 +42,11 @@ public class ProductService {
         return listingRepository.findListingById(id);
     }
     public List<Category> getAllCategories() {
-        return listingRepository.findAllCategoriesFlat(); // ny metode
+        return listingRepository.findAllCategoriesFlat();
     }
 
     public List<Size> getAllSizes() {
-        return listingRepository.findAllSizes(); // ny metode
+        return listingRepository.findAllSizes();
     }
 
 }

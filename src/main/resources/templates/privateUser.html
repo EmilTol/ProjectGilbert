@@ -19,10 +19,12 @@
 
 
 <div class = "text-brand-light container1">
-  <h1 class="h4 fw-semibold profile-name">Gilbert</h1>
+  <h1 class="h4 fw-semibold profile-name" th:text = "${user.firstName}"></h1>
   <img src="" alt="Profile" class="profile-picture">
   <h4 class = "profile-username">@Gilbert</h4>
+  <a th:href = "@{/editUser}" class = "edit-button">Edit profil</a>
   <a th:href="@{/createSale}" class="sell-button">Sell item</a>
+
 </div>
 
 <div class = "darker-green text-brand-light container 2">
@@ -46,24 +48,6 @@
 <main class="container pt-3 pb-5 flex-grow-1">
   <div class="row g-3">
 
-    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xxl-5 g-3">
-      <div class="col" th:each="listing : ${listings}">
-        <a th:href="@{/listings/{id}(id=${listing.listingId})}"
-           class="d-block h-100 text-decoration-none">
-          <div class="card h-100 position-relative">
-            <span class="price-tag" th:text="${listing.price} + ' kr'"></span>
-            <img th:src="@{/img/Jacket.jpg}" th:alt="${listing.brand} + ' ' + ${listing.model}" class="card-img-top">
-            <div class="card-body p-2 d-flex flex-column">
-              <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
-              <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
-              <small class="text-muted mb-3" th:text="'Condition: ' + (${listing.conditions} ?: 'N/A')">Condition </small>
-              <button class="btn btn-outline-success w-100 mt-auto"> View details</button>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-
     <div class="col-6 col-md-4 col-lg-3" th:each="ad : ${userListings}">
       <div class="card product-card h-100">
         <img th:src="@{/images/default.jpg}" class="product-img" alt="Produktbillede">
@@ -75,38 +59,6 @@
       </div>
     </div>
 
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="card product-card h-100">
-        <img src="" class="product-img" alt="Hoodie">
-        <span class="price-tag">100 DKK</span>
-        <div class="card-body p-2 d-flex flex-column">
-          <h6 class="product-title flex-grow-1">Guccie mega hættetrøje</h6>
-          <span class="product-meta">Unisex M</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="card product-card h-100">
-        <img src="" class="product-img" alt="HypeBeast Sko">
-        <span class="price-tag">6000 DKK</span>
-        <div class="card-body p-2 d-flex flex-column">
-          <h6 class="product-title flex-grow-1">Seje sko</h6>
-          <span class="product-meta">EU 44</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="card product-card h-100">
-        <img src="" class="product-img" alt="Tøj ting">
-        <span class="price-tag">2500 dkk</span>
-        <div class="card-body p-2 d-flex flex-column">
-          <h6 class="product-title flex-grow-1">Kvinde tøj</h6>
-          <span class="product-meta">Women S</span>
-        </div>
-      </div>
-    </div>
 
   </div>
 </main>

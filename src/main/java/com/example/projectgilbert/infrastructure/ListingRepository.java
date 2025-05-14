@@ -20,7 +20,7 @@ public class ListingRepository {
     }
 
     //opretter ny listing
-//    @Override
+
     public void save(Listing ad) {
         String sql = "INSERT INTO listings (seller_id, category_id, size_id, item_type, model, brand, description, conditions, materials, price, max_discount_percent, color, status, is_fair_trade, is_validated) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
