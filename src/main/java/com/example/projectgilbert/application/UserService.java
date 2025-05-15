@@ -5,12 +5,14 @@ import com.example.projectgilbert.infrastructure.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, SortingService sortingService) {
         this.userRepository = userRepository;
     }
 

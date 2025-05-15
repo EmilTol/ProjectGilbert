@@ -2,18 +2,23 @@ package com.example.projectgilbert.presentation;
 
 import com.example.projectgilbert.application.LoginService;
 import com.example.projectgilbert.application.ListingService;
+import com.example.projectgilbert.application.SortingService;
 import com.example.projectgilbert.application.UserService;
 import com.example.projectgilbert.entity.Category;
 import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
 import com.example.projectgilbert.entity.User;
+import com.example.projectgilbert.infrastructure.ListingRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MainController {
@@ -21,12 +26,16 @@ public class MainController {
     private final LoginService loginService;
     private final ListingService listingService;
     private final UserService userService;
+    private final ListingRepository listingRepository;
+    private final SortingService sortingService;
 
     @Autowired
-    public MainController(LoginService loginService, ListingService listingService, UserService userService ) {
+    public MainController(LoginService loginService, ListingService listingService, UserService userService, ListingRepository listingRepository, SortingService sortingService) {
         this.loginService  = loginService;
         this.listingService = listingService;
         this.userService = userService;
+        this.listingRepository = listingRepository;
+        this.sortingService = sortingService;
     }
 
 
@@ -36,9 +45,39 @@ public class MainController {
     }
 
     @GetMapping("/home")
-    public String showHome(HttpSession session, Model model) {
+    public String showHome(HttpSession session, Model model,
+                           @RequestParam(defaultValue = "createdAt") String sortBy,
+                           @RequestParam(defaultValue = "desc") String direction) {
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
-        model.addAttribute("listings", listingService.getAllListings());
+
+        List<Listing> listings = listingService.getAllListings(); // Henter alle tilgængelige listings
+
+        SortingService.Direction sortDirection;
+        if (direction.equalsIgnoreCase("asc")) {
+            sortDirection = SortingService.Direction.ASC;
+        } else {
+            sortDirection = SortingService.Direction.DESC;
+        }
+
+        if (sortBy.equalsIgnoreCase("price")) {
+            listings = sortingService.byPrice(listings, sortDirection);
+        } else {
+            listings = sortingService.byDate(listings, sortDirection);
+        }
+
+        model.addAttribute("listings", listings);
+
+        List<Category> parentCategories = listingService.getAllCategories(); // Henter forældrekategorier og deres underkategorier via ListingService
+        // Opretter et map, der mapper forældrekategorier til deres underkategorier
+        Map<Long, List<Category>> subCategoriesMap = listingService.getSubCategoriesForAllParents(parentCategories);
+
+        // Tilføjer kategorier og underkategorier til model for brug i menu på telfon
+        model.addAttribute("categories", parentCategories);
+        model.addAttribute("subCategoriesMap", subCategoriesMap);
+
+        // Tilføjer de aktuelle sorteringsparametre til model for brug i Thymeleaf
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
         return "home";
     }
 
