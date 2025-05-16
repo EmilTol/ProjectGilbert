@@ -2,6 +2,7 @@ package com.example.projectgilbert.application;
 import com.example.projectgilbert.entity.Category;
 import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
+import com.example.projectgilbert.entity.User;
 import com.example.projectgilbert.infrastructure.ListingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,5 +58,32 @@ public class ListingService {
             subCategoriesMap.put(parent.getCategoryId(), subCategories); // Tilføjer underkategorierne til HashMap med forældrekategoriens ID som nøgle
         }
         return subCategoriesMap; // Returnerer HashMap med alle underkategorier organiseret efter forældrekategorier
+    }
+    public List<Listing> getPendingListings() {
+        return listingRepository.findByStatus(Listing.Status.PENDING);
+    }
+
+    public void approveListingById(Long listingId, User currentUser) {
+        if (currentUser == null || !currentUser.isAdmin()) {
+            throw new SecurityException("Only admins can approve listings.");
+        }
+
+        Listing listing = listingRepository.findListingById(listingId);
+        if (listing != null && listing.getStatus() == Listing.Status.PENDING) {
+            listing.setStatus(Listing.Status.APPROVED);
+            listingRepository.update(listing);
+        }
+    }
+
+    public void denyListingById(Long listingId, User currentUser) {
+        if (currentUser == null || !currentUser.isAdmin()) {
+            throw new SecurityException("Only admins can deny listings.");
+        }
+
+        Listing listing = listingRepository.findListingById(listingId);
+        if (listing != null && listing.getStatus() == Listing.Status.PENDING) {
+            listing.setStatus(Listing.Status.REMOVED);
+            listingRepository.update(listing);
+        }
     }
 }

@@ -16,15 +16,16 @@ public class UserRepository {
 
     public User findByEmail(String email) {
         try {
-            String sql = "SELECT user_id, email, password, first_name, last_name, phone_number FROM users WHERE email = ?";
+            String sql = "SELECT user_id, email, password, first_name, last_name, phone_number, role FROM users WHERE email = ?";
             return jdbcTemplate.queryForObject(sql, new Object[]{email}, (rs, rowNum) -> {
-                User user = new User(); // Henter brugeren udfra email i db og mapper resultatet til et user objekt
+                User user = new User();
                 user.setUserId(rs.getLong("user_id"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setFirstName(rs.getString("first_name"));
                 user.setLastName(rs.getString("last_name"));
                 user.setPhoneNumber(rs.getString("phone_number"));
+                user.setRole(User.Role.valueOf(rs.getString("role")));
                 return user;
             });
         } catch (EmptyResultDataAccessException e) {

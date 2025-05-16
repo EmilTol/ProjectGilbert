@@ -38,7 +38,7 @@ public class ListingRepository {
                 ad.getPrice(),
                 ad.getMaxDiscountPercent(),
                 ad.getColor(),
-                "PENDING",
+                ad.getStatus().name(),
                 false,
                 false
         );
@@ -115,7 +115,7 @@ public class ListingRepository {
             listing.setPrice(rs.getBigDecimal("price"));
             listing.setMaxDiscountPercent(rs.getBigDecimal("max_discount_percent"));
             listing.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-            listing.setStatus(rs.getString("status"));
+            listing.setStatus(Listing.Status.valueOf(rs.getString("status")));
             listing.setFairTrade(rs.getBoolean("is_fair_trade"));
             listing.setValidated(rs.getBoolean("is_validated"));
             listing.setColor(rs.getString("color"));
@@ -148,7 +148,7 @@ public class ListingRepository {
                         listing.setPrice(rs.getBigDecimal("price"));
                         listing.setMaxDiscountPercent(rs.getBigDecimal("max_discount_percent"));
                         listing.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                        listing.setStatus(rs.getString("status"));
+                        listing.setStatus(Listing.Status.valueOf(rs.getString("status")));
                         listing.setFairTrade(rs.getBoolean("is_fair_trade"));
                         listing.setValidated(rs.getBoolean("is_validated"));
                         listing.setColor(rs.getString("color"));
@@ -159,5 +159,40 @@ public class ListingRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+    public void update(Listing listing) {
+        String sql = "UPDATE listings SET status = ? WHERE listing_id = ?";
+        jdbcTemplate.update(sql, listing.getStatus().name(), listing.getListingId());
+    }
+
+    public List<Listing> findByStatus(Listing.Status status) {
+        String sql = """
+        SELECT l.*, s.size_label 
+        FROM listings l
+        LEFT JOIN sizes s ON l.size_id = s.size_id
+        WHERE l.status = ?
+    """;
+        return jdbcTemplate.query(sql, new Object[]{status.name()}, (rs, rowNum) -> {
+            Listing listing = new Listing();
+            listing.setListingId(rs.getLong("listing_id"));
+            listing.setSellerId(rs.getLong("seller_id"));
+            listing.setCategoryId(rs.getLong("category_id"));
+            listing.setSizeId(rs.getLong("size_id"));
+            listing.setItemType(rs.getString("item_type"));
+            listing.setModel(rs.getString("model"));
+            listing.setBrand(rs.getString("brand"));
+            listing.setDescription(rs.getString("description"));
+            listing.setConditions(rs.getString("conditions"));
+            listing.setMaterials(rs.getString("materials"));
+            listing.setPrice(rs.getBigDecimal("price"));
+            listing.setMaxDiscountPercent(rs.getBigDecimal("max_discount_percent"));
+            listing.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            listing.setStatus(Listing.Status.valueOf(rs.getString("status")));
+            listing.setFairTrade(rs.getBoolean("is_fair_trade"));
+            listing.setValidated(rs.getBoolean("is_validated"));
+            listing.setColor(rs.getString("color"));
+            listing.setSizeLabel(rs.getString("size_label"));
+            return listing;
+        });
     }
 }

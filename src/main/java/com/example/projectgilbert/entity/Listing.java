@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Listing {
+
+    public enum Status {
+        PENDING, APPROVED, SOLD, CANCELLED, REMOVED
+    }
+
         private Long listingId;
         private Long sellerId;
         private Long categoryId;
@@ -17,7 +22,7 @@ public class Listing {
         private BigDecimal price;
         private BigDecimal maxDiscountPercent; // optional
         private LocalDateTime createdAt;
-        private String status;
+        private Status status;
         private boolean isFairTrade;
         private boolean isValidated;
         private String color;
@@ -102,12 +107,15 @@ public class Listing {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-    public String getStatus() {
+
+    public Status getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+
+    public void setStatus(Status status) {
         this.status = status;
     }
+
     public boolean isFairTrade() {
         return isFairTrade;
     }

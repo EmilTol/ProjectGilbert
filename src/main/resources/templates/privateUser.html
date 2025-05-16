@@ -24,6 +24,11 @@
   <h4 class = "profile-username">@Gilbert</h4>
   <a th:href = "@{/editUser}" class = "edit-button">Edit profil</a>
   <a th:href="@{/createSale}" class="sell-button">Sell item</a>
+  <a th:if="${isAdmin}"
+     th:href="@{/adminPanel}"
+     class="admin-button">
+    Admin Panel
+  </a>
 
 </div>
 

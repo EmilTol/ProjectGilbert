@@ -1,13 +1,23 @@
 package com.example.projectgilbert.entity;
 
 public class User {
+
+    public enum Role {
+        NORMAL, ADMIN
+    }
+
     private long userId;
     private String email;
     private String password;
     private String firstName;
-    private String username;
     private String lastName;
     private String phoneNumber;
+    private Role role;
+
+
+    public boolean isAdmin() {
+        return this.role == Role.ADMIN;
+    }
 
     public User() {
     }
@@ -56,5 +66,13 @@ public class User {
     }
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

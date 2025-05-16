@@ -128,10 +128,17 @@ public class MainController {
             model.addAttribute("needAuth", true);
             return "home";
         }
+
+
         List<Listing> userListings = listingService.getListingsForUser(currentUser.getUserId());
 
         model.addAttribute("user", currentUser);
         model.addAttribute("userListings", userListings);
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+
+        System.out.println("Current user name: " + currentUser.getFirstName());
+        System.out.println("Current user role: " + currentUser.getRole());
+        System.out.println("Is admin? " + currentUser.isAdmin());
 
         return "privateUser";
     }
@@ -194,7 +201,7 @@ public class MainController {
         }
 
         ad.setSellerId(currentUser.getUserId());
-        ad.setStatus("PENDING");
+        ad.setStatus(Listing.Status.PENDING);
         ad.setFairTrade(false);
         ad.setValidated(false);
 
@@ -208,4 +215,51 @@ public class MainController {
         model.addAttribute("listing", listing);
         return "listingPage";
     }
+
+    @GetMapping("/adminPanel")
+    public String showAdminPanel(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null || !currentUser.isAdmin()) {
+            return "redirect:/home";
+        }
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+
+        return "/adminPanel";
+    }
+
+    @GetMapping("/newArrivals")
+    public String showPendingListings(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null || !currentUser.isAdmin()) {
+            return "redirect:/home";
+        }
+
+        List<Listing> pendingListings = listingService.getPendingListings();
+        model.addAttribute("listings", pendingListings);
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+        return "/newArrivals";
+    }
+
+    @PostMapping("/approveListing")
+    public String approveListing(@RequestParam("listingId") Long listingId, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null || !currentUser.isAdmin()) {
+            return "redirect:/home";
+        }
+
+        listingService.approveListingById(listingId, currentUser);
+        return "redirect:newArrivals";
+    }
+
+    @PostMapping("/denyListing")
+    public String denyListing(@RequestParam("listingId") Long listingId, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null || !currentUser.isAdmin()) {
+            return "redirect:/home";
+        }
+
+        listingService.denyListingById(listingId, currentUser);
+        return "redirect:newArrivals";
+    }
+
 }

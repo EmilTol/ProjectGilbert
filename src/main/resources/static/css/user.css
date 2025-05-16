@@ -123,6 +123,19 @@ body {
     text-align: center;
     text-decoration: none;
 }
+.container1 .admin-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;      /* de 3 her er nødvendige, så tekst i midten af knap */
+    width: 120px;
+    height: 37px;
+    background-color: #004224;
+    border: 2px solid #00391e;
+    color: #f8f0e5;
+    text-align: center;
+    text-decoration: none;
+    margin-left: 300px;
+}
 
 /* forstår ikke denne */
 
