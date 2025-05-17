@@ -2,6 +2,7 @@ package com.example.projectgilbert.infrastructure;
 
 import com.example.projectgilbert.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -45,17 +46,17 @@ public class UserRepository {
     }
 
     public void updateUser(User user) {
-        String sql = "UPDATE users SET email = ?, password = ?, first_name = ?, last_name = ?, phone_number = ? WHERE user_id = ?";
-        int updatedRows = jdbcTemplate.update(sql,
-                user.getEmail(),
-                user.getPassword(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getPhoneNumber(),
-                user.getUserId());
-
-        if (updatedRows == 0) {
-            System.out.println("No rows updated" + user.getUserId());
+        try {
+            String sql = "UPDATE users SET email = ?, password = ?, first_name = ?, last_name = ?, phone_number = ? WHERE user_id = ?";
+            int updatedRows = jdbcTemplate.update(sql,
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getPhoneNumber(),
+                    user.getUserId());
+        } catch (DataAccessException dataAccessException) {
+            throw new RuntimeException("Error updating user", dataAccessException);
         }
     }
 
@@ -74,6 +75,8 @@ public class UserRepository {
             });
         } catch (EmptyResultDataAccessException e) {
             return null;
+        } catch (DataAccessException dataAccessException) {
+            throw new RuntimeException("Error finding user by id", dataAccessException);
         }
     }
 
