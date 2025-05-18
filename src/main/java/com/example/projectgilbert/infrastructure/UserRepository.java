@@ -1,6 +1,7 @@
 package com.example.projectgilbert.infrastructure;
 
 import com.example.projectgilbert.entity.User;
+import com.example.projectgilbert.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -76,7 +77,7 @@ public class UserRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException dataAccessException) {
-            throw new RuntimeException("Error finding user by id", dataAccessException);
+            throw new UserNotFoundException(id);
         }
     }
 

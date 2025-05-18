@@ -43,6 +43,7 @@ public class ListingRepository {
                 false
         );
     }
+
     //viser alle kategorier, som women, men, children
 //    @Override
     public List<Category> findAllCategories() {
@@ -83,7 +84,7 @@ public class ListingRepository {
     }
 
 
-//    @Override
+    //    @Override
     public List<Listing> findListingsBySellerId(Long sellerId) {
         String sql = """
         SELECT l.*, s.size_label 
@@ -132,7 +133,7 @@ public class ListingRepository {
 
             return jdbcTemplate.queryForObject(
                     sql,
-                    new Object[]{ listingId },
+                    new Object[]{listingId},
                     (rs, rowNum) -> {
                         Listing listing = new Listing();
                         listing.setListingId(rs.getLong("listing_id"));

@@ -1,6 +1,7 @@
 package com.example.projectgilbert.application;
 
 import com.example.projectgilbert.entity.User;
+import com.example.projectgilbert.exception.LoginFailedException;
 import com.example.projectgilbert.infrastructure.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class LoginService {
         if (user != null && BCrypt.checkpw(password, user.getPassword())) { // Tjekker at brugeren findes og bekræfter kodeord med bcrypt
             return user;
         }
-        return null;
+        throw new LoginFailedException(email);
     }
 
     public boolean register(User user, String confirmPassword) {

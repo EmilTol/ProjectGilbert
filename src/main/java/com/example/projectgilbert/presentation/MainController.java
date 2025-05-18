@@ -8,6 +8,7 @@ import com.example.projectgilbert.entity.Category;
 import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.Size;
 import com.example.projectgilbert.entity.User;
+import com.example.projectgilbert.exception.LoginFailedException;
 import com.example.projectgilbert.infrastructure.ListingRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,13 +94,14 @@ public class MainController {
 
     @PostMapping("/login")
     public String login(@ModelAttribute User user, HttpSession session, Model model) {
-        User loggedIn = loginService.login(user.getEmail(), user.getPassword()); //Logger ind ved hjælp af loginservice
-        if (loggedIn != null) {
-            session.setAttribute("currentUser", loggedIn); // gemmer den user som loggede ind i session
+        try {
+            User loggedIn = loginService.login(user.getEmail(), user.getPassword());
+            session.setAttribute("currentUser", loggedIn);
             return "redirect:/home";
+        } catch (LoginFailedException e) {
+            model.addAttribute("error", "Incorrect email or password");
+            return "login";
         }
-        model.addAttribute("error", "Incorrect email or password");
-        return "login";
     }
 
 
