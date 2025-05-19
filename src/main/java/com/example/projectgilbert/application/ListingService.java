@@ -86,4 +86,18 @@ public class ListingService {
             listingRepository.update(listing);
         }
     }
+
+    public List<Listing> searchListings(String query) { // Søg efter lister baseret på en query
+
+        List<Listing> raw; // Midlertidig liste til data som ikke er sorteret ( rå data )
+
+        if (query == null || query.trim().isEmpty()) { // Tjek om query er null eller tom
+            raw = listingRepository.findAllListings(); // Hent alle lister, hvis ingen query
+        } else {
+            String like = "%" + query.trim().toLowerCase() + "%"; // Forbered LIKE-mønster f.eks &Gucci%
+            raw = listingRepository.findByLikePattern(like); // Søg med LIKE-mønster i model, brand eller description
+        }
+
+        return sortingService.byDate(raw, SortingService.Direction.DESC); // Sorter resultater efter dato (nyeste først)
+    }
 }

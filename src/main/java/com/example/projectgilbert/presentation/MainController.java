@@ -48,10 +48,11 @@ public class MainController {
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model,
                            @RequestParam(defaultValue = "createdAt") String sortBy,
-                           @RequestParam(defaultValue = "desc") String direction) {
+                           @RequestParam(defaultValue = "desc") String direction,
+                           @RequestParam(name = "search", required = false) String search) {
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
 
-        List<Listing> listings = listingService.getAllListings(); // Henter alle tilgængelige listings
+        List<Listing> listings = listingService.searchListings(search);
 
         SortingService.Direction sortDirection;
         if (direction.equalsIgnoreCase("asc")) {
@@ -67,6 +68,7 @@ public class MainController {
         }
 
         model.addAttribute("listings", listings);
+        model.addAttribute("search", search);
 
         List<Category> categories = listingService.getAllCategories(); // Henter forældrekategorier og deres underkategorier via ListingService
 

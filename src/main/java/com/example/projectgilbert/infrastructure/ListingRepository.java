@@ -203,4 +203,22 @@ public class ListingRepository {
             return listing;
         });
     }
+
+    public List<Listing> findByLikePattern(String likePattern) {
+
+        String sql = """
+        SELECT l.*, s.size_label
+        FROM listings l
+        LEFT JOIN sizes s ON l.size_id = s.size_id
+        WHERE  LOWER(l.model)       LIKE ?
+           OR  LOWER(l.brand)       LIKE ?
+           OR  LOWER(l.description) LIKE ?
+        """;
+
+        return jdbcTemplate.query(
+                sql,
+                new BeanPropertyRowMapper<>(Listing.class),
+                likePattern, likePattern, likePattern
+        );
+    }
 }
