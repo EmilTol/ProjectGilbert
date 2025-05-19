@@ -12,7 +12,7 @@ public interface ProductRepository {
 
     List<Category> findAllCategories();
 
-    List<Category> findSubCategoriesByParentId(Long parentId);
+//    List<Category> findSubCategoriesByParentId(Long parentId);
 
     List<Size> findSizesByCategoryId(Long categoryId);
     List<Listing> findListingsBySellerId(Long sellerId);

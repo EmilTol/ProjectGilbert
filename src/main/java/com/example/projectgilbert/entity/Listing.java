@@ -27,6 +27,7 @@ public class Listing {
         private boolean isValidated;
         private String color;
         private String sizeLabel;
+        private String imageFileName;
 
     public Long getListingId() {
         return listingId;
@@ -142,5 +143,12 @@ public class Listing {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getImageFileName() {
+        return imageFileName;
+    }
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
     }
 }

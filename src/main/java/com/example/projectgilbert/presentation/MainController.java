@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 public class MainController {
@@ -68,13 +68,10 @@ public class MainController {
 
         model.addAttribute("listings", listings);
 
-        List<Category> parentCategories = listingService.getAllCategories(); // Henter forældrekategorier og deres underkategorier via ListingService
-        // Opretter et map, der mapper forældrekategorier til deres underkategorier
-        Map<Long, List<Category>> subCategoriesMap = listingService.getSubCategoriesForAllParents(parentCategories);
+        List<Category> categories = listingService.getAllCategories(); // Henter forældrekategorier og deres underkategorier via ListingService
 
         // Tilføjer kategorier og underkategorier til model for brug i menu på telfon
-        model.addAttribute("categories", parentCategories);
-        model.addAttribute("subCategoriesMap", subCategoriesMap);
+        model.addAttribute("categories", categories);
 
         // Tilføjer de aktuelle sorteringsparametre til model for brug i Thymeleaf
         model.addAttribute("sortBy", sortBy);
@@ -196,7 +193,10 @@ public class MainController {
     }
 
     @PostMapping("/createSale")
-    public String createListing(@ModelAttribute("saleAd") Listing ad, HttpSession session) {
+    public String createListing(@ModelAttribute("saleAd") Listing ad,
+                                @RequestParam("image") MultipartFile file,
+                                HttpSession session,
+                                Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
             return "redirect:/login";
@@ -206,6 +206,34 @@ public class MainController {
         ad.setStatus(Listing.Status.PENDING);
         ad.setFairTrade(false);
         ad.setValidated(false);
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                String originalFilename = file.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+                String uniqueFilename = UUID.randomUUID().toString() + extension;
+
+                String uploadDir = new File("src/main/resources/static/uploads").getAbsolutePath();
+
+                File destination = new File(uploadDir + "/" + uniqueFilename);
+                file.transferTo(destination);
+
+                ad.setImageFileName(uniqueFilename);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                model.addAttribute("error", "There was an error uploading the image.");
+
+                List<Category> allCategories = listingService.getAllCategories();
+                List<Size> allSizes = listingService.getAllSizes();
+                model.addAttribute("allCategories", allCategories);
+                model.addAttribute("allSizes", allSizes);
+                model.addAttribute("conditionsList", List.of("NEW", "LIKE_NEW", "GOOD", "FAIR", "POOR"));
+
+                return "createSale";
+            }
+        }
 
         listingService.createListing(ad);
         return "redirect:/privateUser";

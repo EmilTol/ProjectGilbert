@@ -2,7 +2,7 @@ package com.example.projectgilbert.entity;
 
 public class Category {
     private Long categoryId;
-    private Long parentId;
+//    private Long parentId;
     private String name;
 
     public Long getCategoryId() {
@@ -13,13 +13,13 @@ public class Category {
         this.categoryId = categoryId;
     }
 
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
+//    public Long getParentId() {
+//        return parentId;
+//    }
+//
+//    public void setParentId(Long parentId) {
+//        this.parentId = parentId;
+//    }
 
     public String getName() {
         return name;

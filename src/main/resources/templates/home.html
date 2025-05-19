@@ -76,12 +76,15 @@
             <a th:href="@{/listings/{id}(id=${listing.listingId})}"
                class="d-block h-100 text-decoration-none">
                 <div class="card h-100 position-relative">
-                    <span class="price-tag" th:text="${listing.price} + ' kr'"></span>
-                    <img th:src="@{/img/Jacket.jpg}" th:alt="${listing.brand} + ' ' + ${listing.model}" class="card-img-top">
+<!--                    <span class="price-tag" th:text="${listing.price} + ' kr'"></span>-->
+                    <img th:if="${listing.imageFileName != null}"
+                         th:src="@{/uploads/{filename}(filename=${listing.imageFileName})}"
+                         th:alt="wadswasd"
+                         class="card-img-top">
                     <div class="card-body p-2 d-flex flex-column">
                         <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
                         <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
-                        <small class="text-muted mb-3" th:text="'Condition: ' + (${listing.conditions} ?: 'N/A')">Condition </small>
+                        <small class="text-muted mb-3" th:text="'Price: ' + (${listing.price} ?: 'N/A')">Price </small>
                         <button class="btn btn-outline-success w-100 mt-auto"> View details</button>
                     </div>
                 </div>
