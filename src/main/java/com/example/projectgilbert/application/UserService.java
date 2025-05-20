@@ -1,5 +1,6 @@
 package com.example.projectgilbert.application;
 
+import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.User;
 import com.example.projectgilbert.infrastructure.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -46,4 +47,25 @@ public class UserService {
         //updatere
         userRepository.updateUser(user);
     }
+
+    //boolean tjek om den er en favorite
+    public boolean isFavorite(Long userId, Long listingId) {
+        return userRepository.IsitUserFavorite(userId, listingId);
+    }
+
+    public void toggleFavorite(Long userId, Long listingId) {
+        //hvis user har listing som favorite bliver den fjernet
+        if (userRepository.IsitUserFavorite(userId, listingId)) {
+        userRepository.removeFavorite(userId, listingId);
+        }
+        else {
+            //ellers bliver den tilføjet til favoritter
+            userRepository.addFavorite(userId, listingId);
+        }
+    }
+
+    public List<Listing> getFavoriteListingsForUser(Long userId) {
+        return userRepository.findFavoritesByUserId(userId);
+    }
+
 }

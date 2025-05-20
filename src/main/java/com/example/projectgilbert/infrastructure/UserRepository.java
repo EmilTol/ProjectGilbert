@@ -1,5 +1,6 @@
 package com.example.projectgilbert.infrastructure;
 
+import com.example.projectgilbert.entity.Listing;
 import com.example.projectgilbert.entity.User;
 import com.example.projectgilbert.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,4 +102,58 @@ public class UserRepository {
             return user;
         });
     }
+
+    //tæller hvor der er user_id og listing_id, for at se om en listing er en favorite for brugeren
+    public boolean IsitUserFavorite (Long userId, Long ListindId) {
+        String sql = "SELECT COUNT(*) FROM favorites WHERE user_id = ? AND listing_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, ListindId);
+        return count != null && count > 0;
+    }
+
+    //tilføjer en favorite
+    public void addFavorite(Long userId, Long ListindId) {
+        String sql = "INSERT INTO favorites (user_id, listing_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, userId, ListindId);
+    }
+
+    //sletter en favorite
+    public void removeFavorite(Long userId, Long ListindId) {
+        String sql = "DELETE FROM favorites WHERE user_id = ? AND listing_id = ?";
+        jdbcTemplate.update(sql, userId, ListindId);
+    }
+
+    public List<Listing> findFavoritesByUserId(Long userId) {
+        String sql = "SELECT l.listing_id, l.seller_id, l.category_id, l.size_id, l.item_type, l.model, l.brand, " +
+                "l.description, l.conditions, l.materials, l.price, l.max_discount_percent, l.created_at, " +
+                "l.status, l.is_fair_trade, l.is_validated, l.color, s.size_label, l.image_file_name " +
+                "FROM listings l " +
+                "JOIN favorites f ON l.listing_id = f.listing_id " +
+                "LEFT JOIN sizes s ON l.size_id = s.size_id " +
+                "WHERE f.user_id = ?";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Listing listing = new Listing();
+            listing.setListingId(rs.getLong("listing_id"));
+            listing.setSellerId(rs.getLong("seller_id"));
+            listing.setCategoryId(rs.getLong("category_id"));
+            listing.setSizeId(rs.getLong("size_id"));
+            listing.setItemType(rs.getString("item_type"));
+            listing.setModel(rs.getString("model"));
+            listing.setBrand(rs.getString("brand"));
+            listing.setDescription(rs.getString("description"));
+            listing.setConditions(rs.getString("conditions"));
+            listing.setMaterials(rs.getString("materials"));
+            listing.setPrice(rs.getBigDecimal("price"));
+            listing.setMaxDiscountPercent(rs.getBigDecimal("max_discount_percent"));
+            listing.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            listing.setStatus(Listing.Status.valueOf(rs.getString("status")));
+            listing.setFairTrade(rs.getBoolean("is_fair_trade"));
+            listing.setValidated(rs.getBoolean("is_validated"));
+            listing.setColor(rs.getString("color"));
+            listing.setSizeLabel(rs.getString("size_label"));
+            listing.setImageFileName(rs.getString("image_file_name"));
+            return listing;
+        }, userId);
+    }
+
 }

@@ -51,7 +51,7 @@ public class MainController {
                            @RequestParam(defaultValue = "desc") String direction,
                            @RequestParam(name = "search", required = false) String search) {
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
-
+        User currentUser = (User) session.getAttribute("currentUser");
         List<Listing> listings = listingService.searchListings(search);
 
         SortingService.Direction sortDirection;
@@ -78,7 +78,41 @@ public class MainController {
         // Tilføjer de aktuelle sorteringsparametre til model for brug i Thymeleaf
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("direction", direction);
+
+
+        if (currentUser != null) {
+            //hvis brugeren ikke er null, laver vi et map
+            Map<Long, Boolean> favoriteMap = new HashMap<>();
+            //vi gennemgår listings på homepage
+            for (Listing listing : listings) {
+                boolean isFavorite = userService.isFavorite(currentUser.getUserId(), listing.getListingId());
+                favoriteMap.put(listing.getListingId(), isFavorite);
+                //vi gemmer i vores map om listings er en favorite for den logget ind bruger
+            }
+            //vi sender vores map til html'en, bruges så thymeleaf ved hvilket icon det skal vise ved en listing
+            model.addAttribute("favoriteMap", favoriteMap);
+        } else //laver bare et emptyMap hvis ikke logget ind, hvis ikke her, giver 500 fejl
+            model.addAttribute("favoriteMap", Collections.emptyMap());
+
         return "home";
+
+    }
+
+    @PostMapping("/favorites/toggle")
+    public String toggleFavorite(@RequestHeader(value = "referer", required = false) String referer,
+                                 @RequestParam Long listingId,
+                                 HttpSession session,
+                                 Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+
+        userService.toggleFavorite(currentUser.getUserId(), listingId);
+        //OKAY SÅ, den her finder ud af hvilken siden man var på før og digere dig tilbage til den
+        //med det der request header, henter header og putter det i en string som vi bruger her
+        return "redirect:" + (referer != null ? referer : "/home");
     }
 
 
@@ -368,6 +402,41 @@ public class MainController {
 
         listingService.denyListingById(listingId, currentUser);
         return "redirect:newArrivals";
+    }
+
+    @GetMapping("/favorites")
+    public String showFavorites(HttpSession session, Model model,
+                                @RequestParam(defaultValue = "createdAt") String sortBy,
+                                @RequestParam(defaultValue = "desc") String direction) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+        List<Listing> favoriteListings = userService.getFavoriteListingsForUser(currentUser.getUserId());
+
+        // Sorter listings ligesom på /home
+        SortingService.Direction sortDirection = direction.equalsIgnoreCase("asc")
+                ? SortingService.Direction.ASC
+                : SortingService.Direction.DESC;
+
+        if (sortBy.equalsIgnoreCase("price")) {
+            favoriteListings = sortingService.byPrice(favoriteListings, sortDirection);
+        } else {
+            favoriteListings = sortingService.byDate(favoriteListings, sortDirection);
+        }
+
+        model.addAttribute("listings", favoriteListings);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+
+        // Favoritmap bruges stadig for at vise hjerterne
+        Map<Long, Boolean> favoriteMap = new HashMap<>();
+        for (Listing listing : favoriteListings) {
+            favoriteMap.put(listing.getListingId(), true); // vi ved alle er favoritter
+        }
+        model.addAttribute("favoriteMap", favoriteMap);
+        return "/favorites";
     }
 
 }
