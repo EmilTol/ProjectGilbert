@@ -30,8 +30,16 @@ public class ListingService {
         listingRepository.save(ad);
     }
 
-    public List<Listing> getListingsForUser(Long userId) {
-        return listingRepository.findListingsBySellerId(userId);
+    public List<Listing> getApprovedListingsForUser(Long userId) {
+        return listingRepository.findListingsBySellerIdAndStatus(userId, "APPROVED");
+    }
+
+    public List<Listing> getSoldListingsForUser(Long userId) {
+        return listingRepository.findListingsBySellerIdAndStatus(userId, "SOLD");
+    }
+
+    public List<Listing> getPendingListingsForUser(Long userId) {
+        return listingRepository.findListingsBySellerIdAndStatus(userId, "PENDING");
     }
 
     public List<Listing> getAllListings() {

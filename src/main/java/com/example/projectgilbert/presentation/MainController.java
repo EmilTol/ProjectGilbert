@@ -130,11 +130,7 @@ public class MainController {
             return "home";
         }
 
-
-        List<Listing> userListings = listingService.getListingsForUser(currentUser.getUserId());
-
         model.addAttribute("user", currentUser);
-        model.addAttribute("userListings", userListings);
         model.addAttribute("isAdmin", currentUser.isAdmin());
 
         System.out.println("Current user name: " + currentUser.getFirstName());
@@ -143,6 +139,63 @@ public class MainController {
 
         return "privateUser";
     }
+
+    @GetMapping("/privateUser/active")
+    public String showApprovedListings(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+        model.addAttribute("activeTab", "active");
+        return showListingsByStatus(session, model, "APPROVED");
+    }
+
+    @GetMapping("/privateUser/sold")
+    public String showSoldListings(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+        model.addAttribute("activeTab", "sold");
+        return showListingsByStatus(session, model, "SOLD");
+    }
+
+    @GetMapping("/privateUser/waiting")
+    public String showPendingListings(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+        model.addAttribute("activeTab", "waiting");
+        return showListingsByStatus(session, model, "PENDING");
+    }
+
+    private String showListingsByStatus(HttpSession session, Model model, String status) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            model.addAttribute("needAuth", true);
+            return "home";
+        }
+
+        List<Listing> listings;
+        switch (status) {
+            case "APPROVED" -> listings = listingService.getApprovedListingsForUser(currentUser.getUserId());
+            case "SOLD" -> listings = listingService.getSoldListingsForUser(currentUser.getUserId());
+            case "PENDING" -> listings = listingService.getPendingListingsForUser(currentUser.getUserId());
+            default -> listings = List.of();
+        }
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("userListings", listings);
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+//        model.addAttribute("statusFilter", status);
+
+        return "privateUser";
+    }
+
     @GetMapping("/editUser")
     public String showEditUser(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");

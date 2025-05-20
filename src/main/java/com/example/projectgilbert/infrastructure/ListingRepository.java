@@ -86,16 +86,16 @@ public class ListingRepository {
     }
 
 
-    //    @Override
-    public List<Listing> findListingsBySellerId(Long sellerId) {
+
+    public List<Listing> findListingsBySellerIdAndStatus(Long sellerId, String status) {
         String sql = """
         SELECT l.*, s.size_label 
         FROM listings l
         LEFT JOIN sizes s ON l.size_id = s.size_id
-        WHERE l.seller_id = ?
+        WHERE l.seller_id = ? AND l.status = ?
     """;
 
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Listing.class), sellerId);
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Listing.class), sellerId, status);
     }
 
     public List<Listing> findAllListings() {
