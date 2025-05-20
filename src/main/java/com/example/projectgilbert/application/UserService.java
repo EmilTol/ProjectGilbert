@@ -20,9 +20,12 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    //updatere en bruger
     public void updateUser(long userId, String email, String password, String firstName, String lastName, String phoneNumber) {
         User user = userRepository.findById(userId);
 
+        //updatere kun hvis der er input
+        // sørger for hvis intet indtastet for firstName at det ikke bliver sat som null i db
         if (firstName != null && !firstName.isEmpty()) {
             user.setFirstName(firstName);
         }
@@ -36,10 +39,11 @@ public class UserService {
             user.setEmail(email);
         }
         if (password != null && !password.isEmpty()) {
+            //gør at nyt password bliver hashed
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
             user.setPassword(hashedPassword);
         }
-
+        //updatere
         userRepository.updateUser(user);
     }
 }

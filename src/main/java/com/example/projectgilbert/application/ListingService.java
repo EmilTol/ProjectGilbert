@@ -7,9 +7,7 @@ import com.example.projectgilbert.infrastructure.ListingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ListingService {
@@ -23,37 +21,45 @@ public class ListingService {
         this.sortingService = sortingService;
     }
 
+    //opretter ny listing
     public void createListing(Listing ad) {
+        //tjekker at input for model ikke er null/empty
         if (ad.getModel() == null || ad.getModel().isEmpty()) {
             throw new IllegalArgumentException("Model is required");
         }
+        if (ad.getBrand() == null || ad.getBrand().isEmpty()) {
+            throw new IllegalArgumentException("Brand is required");
+        }
+        
+        //gemmer input og opretter ny listing
         listingRepository.save(ad);
     }
 
+    //henter alle listings fra en bruger med status approved
     public List<Listing> getApprovedListingsForUser(Long userId) {
         return listingRepository.findListingsBySellerIdAndStatus(userId, "APPROVED");
     }
 
+    //henter alle listings fra en bruger med status sold
     public List<Listing> getSoldListingsForUser(Long userId) {
         return listingRepository.findListingsBySellerIdAndStatus(userId, "SOLD");
     }
 
+    //henter alle listings fra en bruger med status pending
     public List<Listing> getPendingListingsForUser(Long userId) {
         return listingRepository.findListingsBySellerIdAndStatus(userId, "PENDING");
-    }
-
-    public List<Listing> getAllListings() {
-        return listingRepository.findAllListings();
     }
 
     public Listing getListingById(Long id) {
         return listingRepository.findListingById(id);
     }
 
+    //henter alle categorier til brug i oprettelse af ny listing
     public List<Category> getAllCategories() {
         return listingRepository.findAllCategoriesFlat();
     }
 
+    //henter alle størrelser til brug i oprettelse af ny listing
     public List<Size> getAllSizes() {
         return listingRepository.findAllSizes();
     }
@@ -67,29 +73,41 @@ public class ListingService {
 //        }
 //        return subCategoriesMap; // Returnerer HashMap med alle underkategorier organiseret efter forældrekategorier
 //    }
+    //henter alle Listings med status pending
     public List<Listing> getPendingListings() {
         return listingRepository.findByStatus(Listing.Status.PENDING);
     }
 
+    //til godkendelse af listings med status pending
     public void approveListingById(Long listingId, User currentUser) {
+        //tjekker om den logget ind bruger er admin
         if (currentUser == null || !currentUser.isAdmin()) {
             throw new SecurityException("Only admins can approve listings.");
         }
-
         Listing listing = listingRepository.findListingById(listingId);
+
+        //tjekker at en listing er valgt og har statuspending
         if (listing != null && listing.getStatus() == Listing.Status.PENDING) {
+
+            //listing status bliver updateret til approved
             listing.setStatus(Listing.Status.APPROVED);
             listingRepository.update(listing);
         }
     }
 
+    //til afvisning af listings med status pending
     public void denyListingById(Long listingId, User currentUser) {
+        //tjekker om den logget ind bruger er admin
         if (currentUser == null || !currentUser.isAdmin()) {
             throw new SecurityException("Only admins can deny listings.");
         }
 
         Listing listing = listingRepository.findListingById(listingId);
+
+        //tjekker at en listing er valgt og har statuspending
         if (listing != null && listing.getStatus() == Listing.Status.PENDING) {
+
+            //listing status bliver updateret til removed
             listing.setStatus(Listing.Status.REMOVED);
             listingRepository.update(listing);
         }

@@ -27,7 +27,7 @@ public class MainController {
     private final LoginService loginService;
     private final ListingService listingService;
     private final UserService userService;
-    private final ListingRepository listingRepository;
+    private final ListingRepository listingRepository; //bliver ikke brugt
     private final SortingService sortingService;
 
     @Autowired
@@ -129,10 +129,12 @@ public class MainController {
             model.addAttribute("needAuth", true);
             return "home";
         }
-
+        //giver informationer om logget ind bruger
         model.addAttribute("user", currentUser);
+        //bruges til tjek om logget ind bruger er admin, admin panel tilgøes via denne side
         model.addAttribute("isAdmin", currentUser.isAdmin());
 
+        //kan fjernes, havde nogen probelmer med role og admin
         System.out.println("Current user name: " + currentUser.getFirstName());
         System.out.println("Current user role: " + currentUser.getRole());
         System.out.println("Is admin? " + currentUser.isAdmin());
@@ -140,6 +142,7 @@ public class MainController {
         return "privateUser";
     }
 
+    //kan se godkendte listings
     @GetMapping("/privateUser/active")
     public String showApprovedListings(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -147,10 +150,13 @@ public class MainController {
             model.addAttribute("needAuth", true);
             return "home";
         }
+        //noget th der gør man kan se hvilken side man er på, på sin profil
         model.addAttribute("activeTab", "active");
+        //gør at den viser listings med APPROVED status
         return showListingsByStatus(session, model, "APPROVED");
     }
 
+    //kan se solgte listings
     @GetMapping("/privateUser/sold")
     public String showSoldListings(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -159,9 +165,11 @@ public class MainController {
             return "home";
         }
         model.addAttribute("activeTab", "sold");
+        //gør at den viser listings med SOLD status
         return showListingsByStatus(session, model, "SOLD");
     }
 
+    //kan se sine listings som afventer godkendelse
     @GetMapping("/privateUser/waiting")
     public String showPendingListings(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -170,9 +178,11 @@ public class MainController {
             return "home";
         }
         model.addAttribute("activeTab", "waiting");
+        //gør at den viser listings med PENDING status
         return showListingsByStatus(session, model, "PENDING");
     }
 
+    //methode bliver kaldt af en getMapping og sender en status med sig
     private String showListingsByStatus(HttpSession session, Model model, String status) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
@@ -180,22 +190,25 @@ public class MainController {
             return "home";
         }
 
+        //opretter tom List af Listing
         List<Listing> listings;
+        //ud fra hvad status er, bliver den relevant metode kaldt
         switch (status) {
             case "APPROVED" -> listings = listingService.getApprovedListingsForUser(currentUser.getUserId());
             case "SOLD" -> listings = listingService.getSoldListingsForUser(currentUser.getUserId());
             case "PENDING" -> listings = listingService.getPendingListingsForUser(currentUser.getUserId());
+            //hvis status ikke matcher forbliver den tom
             default -> listings = List.of();
         }
 
         model.addAttribute("user", currentUser);
         model.addAttribute("userListings", listings);
         model.addAttribute("isAdmin", currentUser.isAdmin());
-//        model.addAttribute("statusFilter", status);
 
         return "privateUser";
     }
 
+    //html siden hvor man kan redigere sin bruger
     @GetMapping("/editUser")
     public String showEditUser(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -208,6 +221,8 @@ public class MainController {
         return "editUser";
     }
     @PostMapping("/editUser")
+    //vi requester f.eks. email men gør at den ikke siger fejl hvis ikke indtastet
+    //ikke alle felter behøver blive ændret i
     public String editUser(HttpSession session, Model model, @RequestParam (required = false) String email,
                            @RequestParam (required = false) String password,
                            @RequestParam (required = false) String firstName,
@@ -226,7 +241,7 @@ public class MainController {
         return "redirect:/privateUser";
 
     }
-
+    //side til opret listing
     @GetMapping("/createSale")
     public String showCreateListingForm(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -240,6 +255,7 @@ public class MainController {
         List<Category> allCategories = listingService.getAllCategories();
         List<Size> allSizes = listingService.getAllSizes();
 
+        //bruges til dropdown box
         model.addAttribute("allCategories", allCategories);
         model.addAttribute("allSizes", allSizes);
         model.addAttribute("conditionsList", List.of("NEW", "LIKE_NEW", "GOOD", "FAIR", "POOR"));
@@ -301,10 +317,13 @@ public class MainController {
         return "listingPage";
     }
 
+    //side til admins
     @GetMapping("/adminPanel")
     public String showAdminPanel(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
+        //sørger for logget ind bruger er admin
         if (currentUser == null || !currentUser.isAdmin()) {
+            //hvis ikke sendt til home
             return "redirect:/home";
         }
         model.addAttribute("isAdmin", currentUser.isAdmin());
@@ -312,6 +331,7 @@ public class MainController {
         return "/adminPanel";
     }
 
+    //side hvor admin kan godkende eller afvise nye Listings
     @GetMapping("/newArrivals")
     public String showPendingListings(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -319,12 +339,14 @@ public class MainController {
             return "redirect:/home";
         }
 
+        //henter listings med pending status
         List<Listing> pendingListings = listingService.getPendingListings();
         model.addAttribute("listings", pendingListings);
         model.addAttribute("isAdmin", currentUser.isAdmin());
         return "/newArrivals";
     }
 
+    //til at godkende valgt listing
     @PostMapping("/approveListing")
     public String approveListing(@RequestParam("listingId") Long listingId, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -336,6 +358,7 @@ public class MainController {
         return "redirect:newArrivals";
     }
 
+    //til at afvise valgt listing
     @PostMapping("/denyListing")
     public String denyListing(@RequestParam("listingId") Long listingId, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");

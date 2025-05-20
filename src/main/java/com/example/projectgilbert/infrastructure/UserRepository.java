@@ -46,6 +46,7 @@ public class UserRepository {
         return result == 1;
     }
 
+    //updatere en bruger
     public void updateUser(User user) {
         try {
             String sql = "UPDATE users SET email = ?, password = ?, first_name = ?, last_name = ?, phone_number = ? WHERE user_id = ?";
@@ -86,6 +87,7 @@ public class UserRepository {
         jdbcTemplate.update(sql, id);
     }
 
+    //finder alle brugere, brug i admin panel, husk tilføj role
     public List<User> findAllUsers() {
         String sql = "SELECT user_id, email, password, first_name, last_name, phone_number FROM users";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {

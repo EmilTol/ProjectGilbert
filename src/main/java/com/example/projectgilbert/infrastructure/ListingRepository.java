@@ -19,8 +19,7 @@ public class ListingRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    //opretter ny listing
-
+    //opretter ny listing ud fra input, giv nyt navn
     public void save(Listing ad) {
         String sql = "INSERT INTO listings (seller_id, category_id, size_id, item_type, model, brand, description, " +
                 "conditions, materials, price, max_discount_percent, color, status, is_fair_trade, is_validated, image_file_name) " +
@@ -46,47 +45,20 @@ public class ListingRepository {
         );
     }
 
-    //viser alle kategorier, som women, men, children
-//    @Override
-    public List<Category> findAllCategories() {
-        String sql = "SELECT * FROM categories WHERE parent_id IS NULL";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class)); //Den her mapper automatisk
-        //BeanProperty mapper automatisk, klassen nedenunder et eksempel på hvordan det ser ud hvis man ikke bruger det
-    }
-
-
-    //viser kategorier der høre under f.eks. women
-//    @Override
-//    public List<Category> findSubCategoriesByParentId(Long parentId) {
-//        String sql = "SELECT * FROM categories WHERE parent_id = ?";
-//        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-//            Category category = new Category();
-//            category.setCategoryId(rs.getLong("category_id")); //det er er "manuel mapping"
-//            category.setParentId(rs.getLong("parent_id"));
-//            category.setName(rs.getString("name"));
-//            return category;
-//        }, parentId);
-//    }
-
-    //viser størrelser af relevante valgte kategorier
-//    @Override
-    public List<Size> findSizesByCategoryId(Long categoryId) {
-        String sql = "SELECT * FROM sizes WHERE category_id = ?";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Size.class), categoryId);
-    }
-
+    //henter alle kategorier til dropdown
     public List<Category> findAllCategoriesFlat() {
         String sql = "SELECT * FROM categories";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class));
     }
 
+    //henter alle sizes til dropdown
     public List<Size> findAllSizes() {
         String sql = "SELECT * FROM sizes";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Size.class));
     }
 
 
-
+    //henter listings fra specifik bruger ud fra status, brugt i profil
     public List<Listing> findListingsBySellerIdAndStatus(Long sellerId, String status) {
         String sql = """
         SELECT l.*, s.size_label 
@@ -167,11 +139,14 @@ public class ListingRepository {
             return null;
         }
     }
+
+    //updatere status på en valgt listing, brugt til godkendelse
     public void update(Listing listing) {
         String sql = "UPDATE listings SET status = ? WHERE listing_id = ?";
         jdbcTemplate.update(sql, listing.getStatus().name(), listing.getListingId());
     }
 
+    //finder ALLE listings baseret på en status, kunne bruges på homepage til approved
     public List<Listing> findByStatus(Listing.Status status) {
         String sql = """
     SELECT l.*, s.size_label 
