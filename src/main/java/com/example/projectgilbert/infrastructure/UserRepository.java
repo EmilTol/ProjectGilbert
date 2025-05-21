@@ -164,5 +164,20 @@ public class UserRepository {
             return listing;
         }, userId);
     }
+    public User findUserById(long userId) {
+        String sql = "SELECT * FROM users WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{userId}, (rs, rowNum) -> {
+            User user = new User();
+            user.setUserId(rs.getLong("user_id"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setUsername(rs.getString("username"));
+            user.setPhoneNumber(rs.getString("phone_number"));
+            user.setRole(User.Role.valueOf(rs.getString("role")));
+            return user;
+        });
+    }
 
 }

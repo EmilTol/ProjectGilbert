@@ -86,37 +86,41 @@
     </div>
     <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xxl-5 g-3">
         <div class="col" th:each="listing : ${listings}">
-            <a th:href="@{/listings/{id}(id=${listing.listingId})}"
-               class="d-block h-100 text-decoration-none">
-                <div class="card h-100 position-relative">
+            <div class="card h-100 position-relative">
+                <!--Favorit -->
+                <form th:action="@{/favorites/toggle}" method="post"
+                      class="position-absolute top-0 end-0 p-2"
+                      th:object="${listing}">
+                    <input type="hidden" name="listingId" th:value="${listing.listingId}" />
+                    <button type="submit" class="btn btn-link p-0 border-0 bg-transparent" aria-label="Toggle favorite">
+                        <i class="bi"
+                           th:classappend="${favoriteMap[listing.listingId]} ? 'bi-heart-fill text-danger' : 'bi-heart text-success'"
+                           style="font-size: 1.5rem;"></i>
+                    </button>
+                </form>
+
+                <!-- 🖼 Billede -->
+                <img th:if="${listing.imageFileName != null}"
+                     th:src="@{/uploads/{filename}(filename=${listing.imageFileName})}"
+                     th:alt="Billede"
+                     class="card-img-top">
+
+                <!-- card informationer -->
+                <div class="card-body p-2 d-flex flex-column">
+                    <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
+
+                    <a th:href="@{/publicUser/{userId}/active(userId=${listing.sellerId})}" class="text-decoration-none text-dark">
+                        <span th:text="'@' + ${listing.sellerUsername}"></span>
+                    </a>
+
+                    <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
+                    <small class="text-muted mb-3" th:text="'Price: ' + (${listing.price} ?: 'N/A')">Price</small>
 
 
-                    <form th:action="@{/favorites/toggle}" method="post"
-                          class="position-absolute top-0 end-0 p-2"
-                          th:object="${listing}">
-                        <input type="hidden" name="listingId" th:value="${listing.listingId}" />
-                        <button type="submit" class="btn btn-link p-0 border-0 bg-transparent" aria-label="Toggle favorite">
-
-<!--                            det er her vi tjekker med favoriteMap hvilekt icon den skal vise-->
-                            <i class="bi"
-                               th:classappend="${favoriteMap[listing.listingId]} ? 'bi-heart-fill text-danger' : 'bi-heart text-success'"
-                               style="font-size: 1.5rem;"></i>
-                        </button>
-                    </form>
-<!--                    <span class="price-tag" th:text="${listing.price} + ' kr'"></span>-->
-                    <img th:if="${listing.imageFileName != null}"
-                         th:src="@{/uploads/{filename}(filename=${listing.imageFileName})}"
-                         th:alt="wadswasd"
-                         class="card-img-top">
-                    <div class="card-body p-2 d-flex flex-column">
-                        <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
-                        <small class="text-muted">@<span th:text="${listing.sellerUsername}">username</span></small>
-                        <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
-                        <small class="text-muted mb-3" th:text="'Price: ' + (${listing.price} ?: 'N/A')">Price </small>
-                        <button class="btn btn-outline-success w-100 mt-auto"> View details</button>
-                    </div>
+                    <a th:href="@{/listings/{id}(id=${listing.listingId})}"
+                       class="btn btn-outline-success w-100 mt-auto">View details</a>
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 </main>

@@ -449,5 +449,43 @@ public class MainController {
         model.addAttribute("favoriteMap", favoriteMap);
         return "/favorites";
     }
+    @GetMapping("/publicUser/{userId}/{tab}")
+    public String publicUser(@PathVariable Long userId,
+                             @PathVariable String tab,
+                             Model model,
+                             HttpSession session) {
+
+        User viewedUser = userService.getPublicUserById(userId);
+        if (viewedUser == null) {
+            return "redirect:/home";
+        }
+
+        List<Listing> listings = switch (tab) {
+            case "active" -> listingService.getActiveListingsByUserId(userId);
+            case "sold" -> listingService.getSoldListingsByUserId(userId);
+            default -> listingService.getActiveListingsByUserId(userId);
+        };
+
+        model.addAttribute("user", viewedUser);
+        model.addAttribute("userListings", listings);
+        model.addAttribute("activeTab", tab);
+
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        if (currentUser != null) {
+            Map<Long, Boolean> favoriteMap = new HashMap<>();
+            for (Listing listing : listings) {
+                boolean isFavorite = userService.isFavorite(currentUser.getUserId(), listing.getListingId());
+                favoriteMap.put(listing.getListingId(), isFavorite);
+            }
+            model.addAttribute("favoriteMap", favoriteMap);
+            model.addAttribute("isLoggedIn", true);
+        } else {
+            model.addAttribute("favoriteMap", Collections.emptyMap());
+            model.addAttribute("isLoggedIn", false);
+        }
+
+        return "publicUser";
+    }
 
 }

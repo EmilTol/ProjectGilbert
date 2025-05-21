@@ -215,4 +215,39 @@ public class ListingRepository {
                 categoryId
         );
     }
+    //bruges i public profile til finde approved og sold for valgt bruger
+    public List<Listing> findByUserIdAndStatus(long userId, Listing.Status status) {
+        String sql = """
+        SELECT l.*, s.size_label, u.username
+        FROM listings l
+        LEFT JOIN sizes s ON l.size_id = s.size_id
+        JOIN users u ON l.seller_id = u.user_id
+        WHERE l.seller_id = ? AND l.status = ?
+    """;
+
+        return jdbcTemplate.query(sql, new Object[]{userId, status.name()}, (rs, rowNum) -> {
+            Listing listing = new Listing();
+            listing.setListingId(rs.getLong("listing_id"));
+            listing.setSellerId(rs.getLong("seller_id"));
+            listing.setCategoryId(rs.getLong("category_id"));
+            listing.setSizeId(rs.getLong("size_id"));
+            listing.setItemType(rs.getString("item_type"));
+            listing.setModel(rs.getString("model"));
+            listing.setBrand(rs.getString("brand"));
+            listing.setDescription(rs.getString("description"));
+            listing.setConditions(rs.getString("conditions"));
+            listing.setMaterials(rs.getString("materials"));
+            listing.setPrice(rs.getBigDecimal("price"));
+            listing.setMaxDiscountPercent(rs.getBigDecimal("max_discount_percent"));
+            listing.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            listing.setStatus(Listing.Status.valueOf(rs.getString("status")));
+            listing.setFairTrade(rs.getBoolean("is_fair_trade"));
+            listing.setValidated(rs.getBoolean("is_validated"));
+            listing.setColor(rs.getString("color"));
+            listing.setSizeLabel(rs.getString("size_label"));
+            listing.setImageFileName(rs.getString("image_file_name"));
+            listing.setSellerUsername(rs.getString("username"));
+            return listing;
+        });
+    }
 }

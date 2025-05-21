@@ -67,5 +67,7 @@ public class UserService {
     public List<Listing> getFavoriteListingsForUser(Long userId) {
         return userRepository.findFavoritesByUserId(userId);
     }
-
+    public User getPublicUserById(long userId) {
+        return userRepository.findUserById(userId);
+    }
 }

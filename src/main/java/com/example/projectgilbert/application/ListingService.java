@@ -149,6 +149,12 @@ public class ListingService {
                 .collect(Collectors.toList());
     }
 
+    public List<Listing> getActiveListingsByUserId(Long userId) {
+        return listingRepository.findByUserIdAndStatus(userId, Listing.Status.APPROVED);
+    }
 
+    public List<Listing> getSoldListingsByUserId(Long userId) {
+        return listingRepository.findByUserIdAndStatus(userId, Listing.Status.SOLD);
+    }
 
 }
