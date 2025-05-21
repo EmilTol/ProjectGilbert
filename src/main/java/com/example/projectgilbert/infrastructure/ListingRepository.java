@@ -196,4 +196,18 @@ public class ListingRepository {
                 likePattern, likePattern, likePattern
         );
     }
+
+    public List<Listing> findByCategoryId(Long categoryId) {
+        String sql = """
+            SELECT l.*, s.size_label
+              FROM listings l
+              LEFT JOIN sizes s ON l.size_id = s.size_id
+             WHERE l.category_id = ?
+            """;
+        return jdbcTemplate.query(
+                sql,
+                new BeanPropertyRowMapper<>(Listing.class),
+                categoryId
+        );
+    }
 }
