@@ -334,7 +334,7 @@ public class MainController {
 
                 ad.setImageFileName(uniqueFilename);
 
-            } catch (IOException e) {
+            } catch (IOException e) { // TILFØJ EN RIGTIG EXCEPTION!!!!=!!=!=!=!=!=!=!=!=!=!=!=!
                 e.printStackTrace();
                 model.addAttribute("error", "There was an error uploading the image.");
 
