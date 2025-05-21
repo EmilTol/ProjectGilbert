@@ -28,6 +28,8 @@ public class Listing {
         private String color;
         private String sizeLabel;
         private String imageFileName;
+        //ikke i db, sted at gemme username til vis med relevant listing
+        private String sellerUsername;
 
     public Long getListingId() {
         return listingId;
@@ -150,5 +152,13 @@ public class Listing {
     }
     public void setImageFileName(String imageFileName) {
         this.imageFileName = imageFileName;
+    }
+
+    public String getSellerUsername() {
+        return sellerUsername;
+    }
+
+    public void setSellerUsername(String sellerUsername) {
+        this.sellerUsername = sellerUsername;
     }
 }

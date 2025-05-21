@@ -110,6 +110,7 @@
                          class="card-img-top">
                     <div class="card-body p-2 d-flex flex-column">
                         <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
+                        <small class="text-muted">@<span th:text="${listing.sellerUsername}">username</span></small>
                         <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
                         <small class="text-muted mb-3" th:text="'Price: ' + (${listing.price} ?: 'N/A')">Price </small>
                         <button class="btn btn-outline-success w-100 mt-auto"> View details</button>

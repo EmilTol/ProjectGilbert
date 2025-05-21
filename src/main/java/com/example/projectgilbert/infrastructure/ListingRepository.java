@@ -71,10 +71,13 @@ public class ListingRepository {
     }
 
     public List<Listing> findAllListings() {
-        String sql = "SELECT l.listing_id, l.seller_id, l.category_id, l.size_id, l.item_type, l.model, l.brand, " +
-                "l.description, l.conditions, l.materials, l.price, l.max_discount_percent, l.created_at, " +
-                "l.status, l.is_fair_trade, l.is_validated, l.color, s.size_label, l.image_file_name " +
-                "FROM listings l LEFT JOIN sizes s ON l.size_id = s.size_id";
+        String sql = "SELECT l.listing_id, l.seller_id, l.category_id, l.size_id, l.item_type, l.model, l.brand,\n" +
+                "       l.description, l.conditions, l.materials, l.price, l.max_discount_percent, l.created_at,\n" +
+                "       l.status, l.is_fair_trade, l.is_validated, l.color, s.size_label, l.image_file_name,\n" +
+                "       u.username AS seller_username\n" +
+                "FROM listings l\n" +
+                "LEFT JOIN sizes s ON l.size_id = s.size_id\n" +
+                "JOIN users u ON l.seller_id = u.user_id";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Listing listing = new Listing();
@@ -97,6 +100,8 @@ public class ListingRepository {
             listing.setColor(rs.getString("color"));
             listing.setSizeLabel(rs.getString("size_label"));
             listing.setImageFileName(rs.getString("image_file_name"));
+            //henter username fra user og sætter det som seller_username i sql'en
+            listing.setSellerUsername(rs.getString("seller_username"));
             return listing;
         });
     }

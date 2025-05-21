@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ListingService {
@@ -131,4 +132,23 @@ public class ListingService {
         List<Listing> raw = listingRepository.findByCategoryId(categoryId);
         return sortingService.byDate(raw, SortingService.Direction.DESC);
     }
+
+    // Ny metode til forsiden, viser kun godkendte listings baseret på søgning eller kategori
+    public List<Listing> getApprovedListings(String query, Long categoryId) {
+        List<Listing> raw;
+
+        if (categoryId != null) {
+            raw = getListingsByCategory(categoryId);
+        } else {
+            raw = searchListings(query);
+        }
+
+        // Filtrer så kun APPROVED listings vises
+        return raw.stream()
+                .filter(listing -> listing.getStatus() == Listing.Status.APPROVED)
+                .collect(Collectors.toList());
+    }
+
+
+
 }
