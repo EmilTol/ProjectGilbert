@@ -32,6 +32,21 @@ public class LoginService {
         }
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // crypt / hash af passowrd
         user.setPassword(hashedPassword);
+
+        //sætter username til være, det generet username, sender firstName med
+        String username = generateUsername(user.getFirstName());
+        //setter username som det oprettet
+        user.setUsername(username);
+
         return userRepository.registerUser(user);
+    }
+
+    private String generateUsername(String firstName) {
+        String username;
+        do {
+            String numbers = String.valueOf((int) (Math.random() * 9000) + 1000); //generer 4 random tal
+            username = firstName.toLowerCase() + numbers;
+        } while (userRepository.usernameExists(username)); //opretter username indtil et generet der ikke findes
+        return username;
     }
 }

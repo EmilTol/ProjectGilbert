@@ -119,8 +119,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;      /* de 3 her er nødvendige, så tekst i midten af knap */
+    margin-left: 260px;
     margin-top: 105px;
-    margin-left: 130px;
     width: 120px;
     height: 37px;
     background-color: #004224;
@@ -141,8 +141,9 @@ body {
     color: #f8f0e5;
     text-align: center;
     text-decoration: none;
-    margin-left: 260px;
     margin-top: 105px;
+    margin-left: 130px;
+
 }
 
 /* forstår ikke denne */

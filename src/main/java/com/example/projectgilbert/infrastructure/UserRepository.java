@@ -19,7 +19,7 @@ public class UserRepository {
 
     public User findByEmail(String email) {
         try {
-            String sql = "SELECT user_id, email, password, first_name, last_name, phone_number, role FROM users WHERE email = ?";
+            String sql = "SELECT user_id, email, password, first_name, last_name, phone_number, role, username FROM users WHERE email = ?";
             return jdbcTemplate.queryForObject(sql, new Object[]{email}, (rs, rowNum) -> {
                 User user = new User();
                 user.setUserId(rs.getLong("user_id"));
@@ -29,6 +29,7 @@ public class UserRepository {
                 user.setLastName(rs.getString("last_name"));
                 user.setPhoneNumber(rs.getString("phone_number"));
                 user.setRole(User.Role.valueOf(rs.getString("role")));
+                user.setUsername(rs.getString("username"));
                 return user;
             });
         } catch (EmptyResultDataAccessException e) {
@@ -37,14 +38,22 @@ public class UserRepository {
     }
 
     public boolean registerUser(User user) {
-        String sql = "INSERT INTO users (email, password, first_name, last_name, phone_number) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (email, password, first_name, last_name, phone_number, username) VALUES (?, ?, ?, ?, ?, ?)";
         int result = jdbcTemplate.update(sql,
                 user.getEmail(),
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getPhoneNumber());
+                user.getPhoneNumber(),
+                user.getUsername());
         return result == 1;
+    }
+
+    //ligesom i favs, bruges til at tjek om noget eksister
+    public boolean usernameExists(String username) {
+        String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username);
+        return count != null && count > 0;
     }
 
     //updatere en bruger

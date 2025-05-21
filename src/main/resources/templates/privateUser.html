@@ -21,7 +21,7 @@
 <div class = "text-brand-light container1">
   <h1 class="h4 fw-semibold profile-name" th:text = "${user.firstName}"></h1>
   <img src="" alt="Profile" class="profile-picture">
-  <h4 class = "profile-username">@Gilbert</h4>
+  <h4 class = "profile-username" th:text = "'@' + ${user.username}"></h4>
   <a th:href = "@{/editUser}" class = "edit-button">Edit profil</a>
   <a th:href="@{/createSale}" class="sell-button">Sell item</a>
   <a th:if="${isAdmin}"

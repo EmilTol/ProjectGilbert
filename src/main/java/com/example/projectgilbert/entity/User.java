@@ -11,6 +11,7 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    private String username;
     private String phoneNumber;
     private Role role;
 
@@ -75,4 +76,13 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
+
