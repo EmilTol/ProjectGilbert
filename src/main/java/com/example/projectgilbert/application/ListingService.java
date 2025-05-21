@@ -126,4 +126,9 @@ public class ListingService {
 
         return sortingService.byDate(raw, SortingService.Direction.DESC); // Sorter resultater efter dato (nyeste først)
     }
+
+    public List<Listing> getListingsByCategory(Long categoryId) {
+        List<Listing> raw = listingRepository.findByCategoryId(categoryId);
+        return sortingService.byDate(raw, SortingService.Direction.DESC);
+    }
 }

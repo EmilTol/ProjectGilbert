@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
@@ -48,37 +49,45 @@ public class MainController {
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model,
                            @RequestParam(defaultValue = "createdAt") String sortBy,
-                           @RequestParam(defaultValue = "desc") String direction,
-                           @RequestParam(name = "search", required = false) String search) {
-        model.addAttribute("currentUser", session.getAttribute("currentUser"));
-        User currentUser = (User) session.getAttribute("currentUser");
-        List<Listing> listings = listingService.searchListings(search);
+                           @RequestParam(defaultValue = "desc")      String direction,
+                           @RequestParam(name = "search",   required = false) String search,
+                           @RequestParam(name = "category", required = false) Long   categoryId) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser")); // Tilføjer currentUser til model
+        User currentUser = (User) session.getAttribute("currentUser"); // Henter currentUser fra session
 
-        SortingService.Direction sortDirection;
+        List<Listing> listings;
+
+        if (categoryId != null) { // Hvis kategori valgt, hent kun den kategori
+            listings = listingService.getListingsByCategory(categoryId); // Henter listings for valgt kategori
+            model.addAttribute("selectedCategory", categoryId); // Markerer valgt kategori i view
+        }
+
+        else { // Ellers brug searchListings, hvilket henter alle hvis intet er søgt, lidt kringlet løsning, men kunne ikke finde en anden løsning
+            listings = listingService.searchListings(search);// Henter listings der matcher søgeord eller alle
+            model.addAttribute("selectedCategory", null);// Ingen kategori valgt
+        }
+
+        SortingService.Direction sortDirection; // Bestemmer sorterings retning
         if (direction.equalsIgnoreCase("asc")) {
             sortDirection = SortingService.Direction.ASC;
         } else {
             sortDirection = SortingService.Direction.DESC;
         }
 
-        if (sortBy.equalsIgnoreCase("price")) {
-            listings = sortingService.byPrice(listings, sortDirection);
+
+        if (sortBy.equalsIgnoreCase("price")) { // Anvend sortering efter pris eller dato
+            listings = sortingService.byPrice(listings, sortDirection); // Sortér efter pris
         } else {
-            listings = sortingService.byDate(listings, sortDirection);
+            listings = sortingService.byDate(listings, sortDirection); // Sortér efter dato
         }
 
-        model.addAttribute("listings", listings);
-        model.addAttribute("search", search);
+        model.addAttribute("listings", listings); // Tilføjer listings til model
+        model.addAttribute("search", search);  // Tilføjer søgetekst til model
+        model.addAttribute("sortBy", sortBy); // Tilføjer sortBy til model
+        model.addAttribute("direction", direction); // Tilføjer direction til model
 
         List<Category> categories = listingService.getAllCategories(); // Henter forældrekategorier og deres underkategorier via ListingService
-
-        // Tilføjer kategorier og underkategorier til model for brug i menu på telfon
-        model.addAttribute("categories", categories);
-
-        // Tilføjer de aktuelle sorteringsparametre til model for brug i Thymeleaf
-        model.addAttribute("sortBy", sortBy);
-        model.addAttribute("direction", direction);
-
+        model.addAttribute("categories", categories); // Tilføjer kategorier til model
 
         if (currentUser != null) {
             //hvis brugeren ikke er null, laver vi et map
@@ -95,7 +104,6 @@ public class MainController {
             model.addAttribute("favoriteMap", Collections.emptyMap());
 
         return "home";
-
     }
 
     @PostMapping("/favorites/toggle")
@@ -326,7 +334,7 @@ public class MainController {
 
                 ad.setImageFileName(uniqueFilename);
 
-            } catch (IOException e) {
+            } catch (IOException e) { // TILFØJ EN RIGTIG EXCEPTION!!!!=!!=!=!=!=!=!=!=!=!=!=!=!
                 e.printStackTrace();
                 model.addAttribute("error", "There was an error uploading the image.");
 
