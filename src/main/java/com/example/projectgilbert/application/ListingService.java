@@ -116,21 +116,21 @@ public class ListingService {
 
     public List<Listing> searchListings(String query) { // Søg efter lister baseret på en query
 
-        List<Listing> raw; // Midlertidig liste til data som ikke er sorteret ( rå data )
+        List<Listing> list; // Midlertidig liste til data som ikke er sorteret ( rå data )
 
         if (query == null || query.trim().isEmpty()) { // Tjek om query er null eller tom
-            raw = listingRepository.findAllListings(); // Hent alle lister, hvis ingen query
+            list = listingRepository.findAllListings(); // Hent alle lister, hvis ingen query
         } else {
             String like = "%" + query.trim().toLowerCase() + "%"; // Forbered LIKE-mønster f.eks &Gucci%
-            raw = listingRepository.findByLikePattern(like); // Søg med LIKE-mønster i model, brand eller description
+            list = listingRepository.findByLikePattern(like); // Søg med LIKE-mønster i model, brand eller description
         }
 
-        return sortingService.byDate(raw, SortingService.Direction.DESC); // Sorter resultater efter dato (nyeste først)
+        return list;
     }
 
     public List<Listing> getListingsByCategory(Long categoryId) {
-        List<Listing> raw = listingRepository.findByCategoryId(categoryId);
-        return sortingService.byDate(raw, SortingService.Direction.DESC);
+        List<Listing> list = listingRepository.findByCategoryId(categoryId);
+        return list;
     }
 
     // Ny metode til forsiden, viser kun godkendte listings baseret på søgning eller kategori

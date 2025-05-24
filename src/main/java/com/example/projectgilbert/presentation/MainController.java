@@ -58,16 +58,6 @@ public class MainController {
         //bruger samme sorting, men bruger dem gennem anden methode som sørge for kun Approved listings vises
         List<Listing> listings = listingService.getApprovedListings(search, categoryId);
 
-//        if (categoryId != null) { // Hvis kategori valgt, hent kun den kategori
-//            listings = listingService.getListingsByCategory(categoryId); // Henter listings for valgt kategori
-//            model.addAttribute("selectedCategory", categoryId); // Markerer valgt kategori i view
-//        }
-//
-//        else { // Ellers brug searchListings, hvilket henter alle hvis intet er søgt, lidt kringlet løsning, men kunne ikke finde en anden løsning
-//            listings = listingService.searchListings(search);// Henter listings der matcher søgeord eller alle
-//            model.addAttribute("selectedCategory", null);// Ingen kategori valgt
-//        }
-
         SortingService.Direction sortDirection; // Bestemmer sorterings retning
         if (direction.equalsIgnoreCase("asc")) {
             sortDirection = SortingService.Direction.ASC;
@@ -89,8 +79,6 @@ public class MainController {
         model.addAttribute("selectedCategory", categoryId);
         //gør det samme som udkommenteret men samlet i en linje
         model.addAttribute("categories",listingService.getAllCategories());
-//        List<Category> categories = listingService.getAllCategories(); // Henter forældrekategorier og deres underkategorier via ListingService
-//        model.addAttribute("categories", categories); // Tilføjer kategorier til model
 
         if (currentUser != null) {
             //hvis brugeren ikke er null, laver vi et map
