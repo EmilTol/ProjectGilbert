@@ -99,7 +99,7 @@
                     </button>
                 </form>
 
-                <!-- 🖼 Billede -->
+                <!-- Billede -->
                 <img th:if="${listing.imageFileName != null}"
                      th:src="@{/uploads/{filename}(filename=${listing.imageFileName})}"
                      th:alt="Billede"

@@ -41,15 +41,21 @@
 
 <div class="container mt-5">
     <h2>Pending Listings</h2>
-    <div class="row">
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xxl-5 g-3">
         <div class="col" th:each="listing : ${listings}">
-            <div class="card mb-4" style="width: 18rem;">
-                <img th:src="@{/img/Jacket.jpg}" class="card-img-top" alt="Item image">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${listing.brand} + ' ' + ${listing.model}">Item Name</h5>
-                    <p class="card-text" th:text="'Price: ' + ${listing.price} + ' kr'">Price</p>
-                    <p class="card-text" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</p>
-                    <p class="card-text" th:text="'Status: ' + ${listing.status}">Status</p>
+            <div class="card h-100 position-relative">
+                <!-- Billede -->
+                <img th:if="${listing.imageFileName != null}"
+                     th:src="@{/uploads/{filename}(filename=${listing.imageFileName})}"
+                     th:alt="Billede"
+                     class="card-img-top">
+
+                <!-- card informationer -->
+                <div class="card-body p-2 d-flex flex-column">
+                    <h6 class="card-title mb-2" th:text="${listing.brand} + ' ' + ${listing.model}">Brand Model</h6>
+
+                    <small class="text-muted" th:text="'Size: ' + (${listing.sizeLabel} ?: 'N/A')">Size</small>
+                    <small class="text-muted mb-3" th:text="'Price: ' + (${listing.price} ?: 'N/A')">Price</small>
 
                     <!-- Approve button -->
                     <form method="post" th:action="@{/approveListing}">
