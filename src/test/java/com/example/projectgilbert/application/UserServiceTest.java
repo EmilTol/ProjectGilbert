@@ -33,13 +33,13 @@ class UserServiceTest {
 
             UserService userService = new UserService(fakeRepo, null);
 
-            userService.updateUser(1L, "newemail@example.com", "newpass", "NewFirst", "NewLast", "12345678");
+            userService.updateUser(1L, "newemail@gmail.com", "newpass", "NewFirst", "NewLast", "12345678");
 
             User updatedUser = fakeRepo.storedUser;
 
             assertEquals("NewFirst", updatedUser.getFirstName());
             assertEquals("NewLast", updatedUser.getLastName());
-            assertEquals("newemail@example.com", updatedUser.getEmail());
+            assertEquals("newemail@gmail.com", updatedUser.getEmail());
             assertEquals("12345678", updatedUser.getPhoneNumber());
             assertNotNull(updatedUser.getPassword());
             assertNotEquals("newpass", updatedUser.getPassword());  // fordi password er hashed
